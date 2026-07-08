@@ -1,5 +1,3 @@
----
----
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,57 +5,2622 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Cricket 300 Draft</title>
   <style>
+    :root {
+      --bg: #eef3ee;
+      --panel: #ffffff;
+      --panel-2: #f8faf7;
+      --ink: #16201a;
+      --muted: #617067;
+      --line: #d8e1da;
+      --green: #247a49;
+      --green-2: #dcf0e3;
+      --blue: #285f92;
+      --blue-2: #e1edf7;
+      --amber: #9f6219;
+      --amber-2: #fff0d7;
+      --red: #aa3434;
+      --red-2: #ffe3de;
+      --black: #111615;
+      --shadow: 0 18px 45px rgba(20, 35, 26, .12);
+    }
+
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: #eef3ee;
-      color: #16201a;
+      background:
+        radial-gradient(circle at 18% 0%, rgba(36, 122, 73, .16), transparent 28rem),
+        linear-gradient(180deg, #f6f9f6, var(--bg));
+      color: var(--ink);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    main {
-      width: min(560px, calc(100vw - 32px));
-      border: 1px solid #d8e1da;
+    button, input, select { font: inherit; }
+
+    button {
+      min-height: 38px;
+      border: 1px solid var(--line);
       border-radius: 8px;
-      background: #fff;
-      padding: 24px;
-      box-shadow: 0 18px 45px rgba(20, 35, 26, .12);
+      padding: 8px 12px;
+      background: var(--panel);
+      color: var(--ink);
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 22px rgba(22, 32, 26, .12);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: .5;
+    }
+
+    button.primary {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    button.dark {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+
+    button.warn {
+      background: var(--amber);
+      color: #fff;
+      border-color: var(--amber);
+    }
+
+    .app {
+      width: min(1500px, calc(100vw - 24px));
+      margin: 0 auto;
+      padding: 16px 0 28px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(320px, 1fr) auto;
+      gap: 16px;
+      align-items: end;
+      padding: 8px 0 14px;
     }
 
     h1 {
-      margin: 0 0 8px;
-      font-size: 30px;
+      margin: 0;
+      font-size: clamp(32px, 5vw, 62px);
+      line-height: .95;
       letter-spacing: 0;
     }
 
-    p {
+    .tagline {
+      color: var(--muted);
+      margin: 8px 0 0;
+      max-width: 740px;
+    }
+
+    .mode-switch {
+      display: flex;
+      gap: 6px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .82);
+      justify-self: end;
+    }
+
+    .mode-switch button {
+      border: 0;
+      min-width: 86px;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .mode-switch button.active {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .nav {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .nav button {
+      min-width: 96px;
+    }
+
+    .nav button.active {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(320px, .9fr) minmax(360px, 1.1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .intro-copy {
+      display: grid;
+      align-content: center;
+      gap: 14px;
+      min-height: 430px;
+    }
+
+    .intro-copy h2 {
       margin: 0;
-      color: #617067;
-      line-height: 1.45;
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: .96;
+      letter-spacing: 0;
+    }
+
+    .stat-guide {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .guide-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+      padding: 10px;
+    }
+
+    .guide-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .guide-item span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .mode-cards {
+      display: grid;
+      gap: 10px;
+    }
+
+    .mode-card {
+      min-height: 108px;
+      display: grid;
+      gap: 6px;
+      text-align: left;
+      align-content: center;
+      background: var(--panel);
+    }
+
+    .mode-card strong {
+      display: block;
+      font-size: 22px;
+    }
+
+    .mode-card.active {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(36, 122, 73, .18);
+    }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .draft-grid {
+      display: grid;
+      grid-template-columns: minmax(360px, 460px) minmax(620px, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .draft-controls {
+      display: grid;
+      gap: 12px;
+    }
+
+    .draw-machine {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .reel {
+      min-height: 84px;
+      display: grid;
+      align-content: center;
+      gap: 5px;
+      border: 1px solid rgba(255,255,255,.34);
+      border-radius: 8px;
+      background: rgba(0,0,0,.20);
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .reel span {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      opacity: .76;
+      font-weight: 800;
+    }
+
+    .reel strong {
+      display: block;
+      font-size: clamp(18px, 2vw, 25px);
+      line-height: 1.08;
+      white-space: normal;
+      overflow: visible;
+      overflow-wrap: anywhere;
+    }
+
+    .reel.spinning strong {
+      animation: reelPulse .16s linear infinite;
+    }
+
+    @keyframes reelPulse {
+      0% { transform: translateY(-9px); opacity: .45; }
+      100% { transform: translateY(9px); opacity: 1; }
+    }
+
+    .draw-row,
+    .toolbar,
+    .split-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .toolbar {
+      justify-content: space-between;
+    }
+
+    .field-card {
+      min-height: 190px;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at center, rgba(36, 122, 73, .92) 0%, rgba(36, 122, 73, .92) 58%, rgba(22, 83, 48, .94) 59%, rgba(22, 83, 48, .94) 100%);
+      color: #fff;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.25);
+      padding: 16px;
+    }
+
+    .pitch {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 86px;
+      height: 142px;
+      transform: translate(-50%, -50%);
+      background: #c99b5c;
+      border-radius: 20px;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.22);
+    }
+
+    .crease {
+      position: absolute;
+      left: 50%;
+      width: 110px;
+      height: 2px;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,.85);
+    }
+
+    .crease.top { top: 48px; }
+    .crease.bottom { bottom: 48px; }
+
+    .field-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .draw-label {
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: 12px;
+      opacity: .75;
+      font-weight: 700;
+    }
+
+    .draw-title {
+      margin-top: 6px;
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 850;
+    }
+
+    .draw-sub {
+      margin-top: 8px;
+      font-size: 14px;
+      opacity: .88;
+    }
+
+    .draw-button {
+      width: 100%;
+      min-height: 58px;
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .target-pill {
+      min-width: 86px;
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      background: rgba(0,0,0,.18);
+    }
+
+    .target-pill strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status-line {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+      color: var(--muted);
+      padding: 10px 12px;
+    }
+
+    .status-line.error {
+      border-color: #e5a19d;
+      background: var(--red-2);
+      color: #7f2424;
+    }
+
+    .status-line.warn {
+      border-color: #dfb46f;
+      background: var(--amber-2);
+      color: #724611;
+    }
+
+    .draft-footer {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .metric {
+      min-height: 72px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 23px;
+      line-height: 1.05;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .xi-wrap {
+      position: sticky;
+      top: 12px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .xi-grid {
+      display: grid;
+      grid-template-columns: repeat(11, minmax(72px, 1fr));
+      gap: 8px;
+    }
+
+    .slot {
+      min-height: 118px;
+      border: 1px dashed #b8c8be;
+      border-radius: 8px;
+      padding: 8px;
+      background: #f7faf7;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 5px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slot.active-slot {
+      border-style: solid;
+      border-color: var(--green);
+      background: var(--green-2);
+    }
+
+    .slot.filled {
+      border-style: solid;
+      background: #fff;
+    }
+
+    .slot-num {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .slot-name {
+      font-weight: 800;
+      line-height: 1.08;
+      align-self: center;
+      overflow-wrap: anywhere;
+    }
+
+    .slot-note {
+      min-height: 15px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .slot-remove {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 25px;
+      min-height: 25px;
+      padding: 0;
+      display: none;
+    }
+
+    .slot.filled:hover .slot-remove { display: grid; place-items: center; }
+
+    .player-panel {
+      margin-top: 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .player-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      max-height: calc(100vh - 325px);
+      overflow: auto;
+      padding-right: 3px;
+    }
+
+    .player-card {
+      min-height: 126px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 11px;
+      text-align: left;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(190px, .75fr) minmax(170px, .55fr);
+      gap: 10px;
+      align-items: center;
+    }
+
+    .player-card.disabled {
+      background: var(--black);
+      color: #d6ddd8;
+      border-color: var(--black);
+      opacity: .88;
+    }
+
+    .player-card.disabled .small,
+    .player-card.disabled .stat-label,
+    .player-card.disabled .reason {
+      color: #9da9a2;
+    }
+
+    .player-card.chosen {
+      opacity: .45;
+    }
+
+    .player-card.pending {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(36, 122, 73, .18);
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .player-name {
+      font-weight: 850;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      hyphens: auto;
+    }
+
+    .rating {
+      border-radius: 7px;
+      background: #edf4ef;
+      color: var(--ink);
+      padding: 4px 7px;
+      font-weight: 850;
+    }
+
+    .player-card.disabled .rating {
+      background: #28302d;
+      color: #d6ddd8;
+    }
+
+    .badges,
+    .positions {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 5px;
+      width: 100%;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 4px 7px;
+      font-size: 12px;
+      color: var(--muted);
+      background: #f0f4f1;
+    }
+
+    .badge.bat { color: var(--blue); background: var(--blue-2); }
+    .badge.all { color: var(--green); background: var(--green-2); }
+    .badge.bowl { color: var(--red); background: var(--red-2); }
+    .badge.keep { color: var(--amber); background: var(--amber-2); }
+
+    .pos {
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #eef3ef;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .pos.hot {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .player-card.disabled .pos {
+      background: #28302d;
+      color: #aeb8b2;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: 7px;
+      padding: 5px 7px;
+      min-width: 0;
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 10px;
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hidden-stat {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+    }
+
+    .reason {
+      min-height: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .card-main,
+    .card-roles,
+    .card-stats {
+      min-width: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .card-stats {
+      align-content: center;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: minmax(360px, 500px) 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .score {
+      font-size: clamp(48px, 8vw, 86px);
+      line-height: .9;
+      font-weight: 900;
+      margin: 10px 0 4px;
+    }
+
+    .progress {
+      height: 10px;
+      background: #e9f0eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      transition: width .2s ease;
+    }
+
+    .speed-control {
+      display: flex;
+      gap: 6px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+      width: fit-content;
+    }
+
+    .speed-control button {
+      border: 0;
+      background: transparent;
+      min-width: 48px;
+    }
+
+    .speed-control button.active {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .commentary {
+      max-height: 475px;
+      overflow: auto;
+      display: grid;
+      gap: 7px;
+      padding-right: 4px;
+    }
+
+    .ball {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 8px 9px;
+      display: grid;
+      grid-template-columns: 54px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .event {
+      border-radius: 7px;
+      padding: 4px 7px;
+      background: #edf4ef;
+      font-weight: 850;
+    }
+
+    .event.boundary {
+      color: var(--green);
+      background: var(--green-2);
+    }
+
+    .event.wicket {
+      color: var(--red);
+      background: var(--red-2);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 7px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 750;
+    }
+
+    th.num,
+    td.num {
+      text-align: right;
+    }
+
+    .tables {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .result {
+      margin-top: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      padding: 11px 12px;
+      color: var(--muted);
+    }
+
+    .result.win {
+      background: var(--green-2);
+      border-color: #a9d7b8;
+      color: #185331;
+    }
+
+    .result.loss {
+      background: var(--red-2);
+      border-color: #e2aaa5;
+      color: #762424;
+    }
+
+    .feedback {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .feedback-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+      padding: 11px 12px;
+    }
+
+    .feedback-card strong {
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .feedback-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.42;
+    }
+
+    .feedback-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.42;
+    }
+
+    .feedback-card li + li {
+      margin-top: 6px;
+    }
+
+    .feedback-card.wide {
+      grid-column: 1 / -1;
+    }
+
+    .empty {
+      width: 100%;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .position-choice {
+      border: 1px solid #a9d7b8;
+      background: var(--green-2);
+      border-radius: 8px;
+      padding: 12px;
+      display: none;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .position-choice.active {
+      display: flex;
+    }
+
+    .position-buttons {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .position-buttons button {
+      min-width: 44px;
+      min-height: 38px;
+      font-weight: 850;
+      background: #fff;
+    }
+
+    .database-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .filters {
+      display: grid;
+      gap: 8px;
+    }
+
+    .input {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .db-count {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 1100px) {
+      .intro,
+      .draft-grid,
+      .sim-grid,
+      .database-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .xi-wrap { position: static; }
+      .xi-grid { grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); }
+      .player-grid { max-height: none; }
+      .tables { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .app { width: min(100vw - 16px, 1500px); }
+      .topbar { grid-template-columns: 1fr; align-items: start; }
+      .mode-switch { justify-self: start; max-width: 100%; overflow-x: auto; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .draft-footer,
+      .feedback { grid-template-columns: 1fr; }
+      .draw-machine { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .reel { min-height: 62px; }
+      .reel strong { font-size: 19px; }
+      .stat-guide { grid-template-columns: 1fr; }
+      .selected-xi-panel { order: 2; }
+      .player-panel { order: 1; margin-top: 0; }
+      .xi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .slot { min-height: 88px; }
+      .player-grid { grid-template-columns: 1fr; }
+      .player-card { grid-template-columns: 1fr; }
+      .stat-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .ball { grid-template-columns: 46px 1fr; }
+      .ball .event { grid-column: 2; width: fit-content; }
     }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Cricket 300 Draft</h1>
-    <p>Loading the draft simulator...</p>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <h1>Cricket 300 Draft</h1>
+        <p class="tagline">Draft an XI from random country and decade turns, keep every batter in an eligible position, then try to clear 300 in 20 overs.</p>
+      </div>
+      <div class="mode-switch" aria-label="Mode">
+        <button class="active" data-mode="easy">Easy</button>
+        <button data-mode="medium">Medium</button>
+        <button data-mode="hard">Hard</button>
+      </div>
+    </header>
+
+    <nav class="nav" aria-label="Views">
+      <button class="active" data-view="intro">Intro</button>
+      <button data-view="draft">Draft</button>
+      <button data-view="simulate">Score</button>
+      <button data-view="database">Database</button>
+    </nav>
+
+    <section id="introView" class="view active">
+      <div class="intro">
+        <section class="panel intro-copy">
+          <div>
+            <h2>Build a 300-run XI.</h2>
+            <p class="tagline">Each turn gives you a random country and decade. Pick one eligible cricketer from that pool, then choose their batting position when more than one legal slot is open.</p>
+          </div>
+          <div class="metrics">
+            <div class="metric"><strong>590</strong><span>Era-specific cards</span></div>
+            <div class="metric"><strong>12</strong><span>Cricket nations</span></div>
+            <div class="metric"><strong>300+</strong><span>Score target</span></div>
+            <div class="metric"><strong>XI</strong><span>Balanced team</span></div>
+          </div>
+          <div class="stat-guide">
+            <div class="guide-item"><strong>Batting Skill</strong><span>Controls reliability, wicket avoidance, strike rotation, and how often a batter converts starts.</span></div>
+            <div class="guide-item"><strong>Batting Power</strong><span>Controls boundary hitting. High power matters most in the powerplay and death overs.</span></div>
+            <div class="guide-item"><strong>Bowling Skill</strong><span>Measures whether the player is a real bowling option for team balance.</span></div>
+            <div class="guide-item"><strong>Variation</strong><span>Rewards bowlers with yorkers, spin, changes of pace, or tactical range.</span></div>
+          </div>
+          <button class="primary" id="startDraftBtn">Start Team Selection</button>
+        </section>
+
+        <section class="panel">
+          <strong>Select Mode</strong>
+          <div class="mode-cards" style="margin-top:10px">
+            <button class="mode-card active" data-mode-choice="easy">
+              <strong>Easy</strong>
+              <span class="small">All stats visible. 3 skips. Target success tuned near 7%.</span>
+            </button>
+            <button class="mode-card" data-mode-choice="medium">
+              <strong>Medium</strong>
+              <span class="small">All stats visible. 1 skip. Target success tuned near 5%.</span>
+            </button>
+            <button class="mode-card" data-mode-choice="hard">
+              <strong>Hard</strong>
+              <span class="small">Stats hidden. 1 skip. Target success tuned near 3%.</span>
+            </button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="draftView" class="view">
+      <div class="draft-grid">
+        <section class="panel draft-controls">
+          <div class="field-card">
+            <div class="pitch"><span class="crease top"></span><span class="crease bottom"></span></div>
+            <div class="field-content">
+              <div>
+                <div class="draw-label">Current turn</div>
+                <div class="draw-title" id="drawTitle">No draw</div>
+                <div class="draw-sub" id="drawSub">Draw a country and decade</div>
+                <div class="draw-machine" aria-live="polite">
+                  <div class="reel" id="nationReel"><span>Country</span><strong>Ready</strong></div>
+                  <div class="reel" id="decadeReel"><span>Decade</span><strong>Ready</strong></div>
+                </div>
+              </div>
+              <div class="target-pill">
+                <strong>300</strong>
+                <span>target</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="draw-row">
+            <button class="primary draw-button" id="drawBtn">Spin Country + Decade</button>
+            <button id="skipBtn">Skip Draw</button>
+            <button id="autoBtn">Auto Draft</button>
+            <button id="resetBtn">Reset</button>
+          </div>
+
+          <div class="metrics" id="metrics"></div>
+          <div class="status-line" id="status">Draw a country and decade, then choose an eligible player card.</div>
+        </section>
+
+        <section class="xi-wrap">
+          <div class="panel selected-xi-panel">
+            <div class="toolbar">
+              <div>
+                <strong>Selected XI</strong>
+                <div class="small" id="slotHint">Choose a slot when the selected card has multiple legal positions.</div>
+              </div>
+            </div>
+            <div class="xi-grid" id="xiGrid"></div>
+          </div>
+
+          <div class="panel player-panel">
+            <div class="toolbar">
+              <div>
+                <strong>Available Cards</strong>
+                <div class="small" id="poolHint">Draw a nation and decade.</div>
+              </div>
+              <div class="small" id="modeHint">Stats visible</div>
+            </div>
+            <div class="position-choice" id="positionChoice"></div>
+            <div class="player-grid" id="playerGrid"></div>
+          </div>
+        </section>
+
+        <section class="panel draft-footer">
+          <div>
+            <strong>Ready to score?</strong>
+            <div class="small" id="draftFooterText">Complete all 11 positions to unlock simulation.</div>
+          </div>
+          <button class="primary" id="draftStartSimBtn">Start Simulation</button>
+        </section>
+      </div>
+    </section>
+
+    <section id="simulateView" class="view">
+      <div class="sim-grid">
+        <section class="panel">
+          <div class="small" id="inningsState">Ready</div>
+          <div class="score" id="scoreText">0/0</div>
+          <div class="small" id="scoreMeta">Overs 0.0, required target 300+</div>
+          <div class="progress"><div class="bar" id="inningsBar"></div></div>
+          <div class="draw-row" style="margin-top:12px; justify-content:space-between">
+            <div class="speed-control" aria-label="Simulation speed">
+              <button class="active" data-speed="1">1x</button>
+              <button data-speed="2">2x</button>
+              <button data-speed="4">4x</button>
+            </div>
+            <button class="primary" id="runSimBtn">Run Simulation</button>
+            <button class="dark" id="skipEndBtn">Skip to End</button>
+            <button id="restartSimBtn">Restart</button>
+          </div>
+          <div class="result" id="resultBox">Complete an XI to score the innings.</div>
+          <div id="analysisBox"></div>
+        </section>
+
+        <section class="panel">
+          <div class="toolbar">
+            <strong>Commentary</strong>
+            <span class="small" id="legalBalls">0 balls</span>
+          </div>
+          <div class="commentary" id="commentary"></div>
+        </section>
+      </div>
+
+      <div class="tables">
+        <section class="panel">
+          <strong>Batting Card</strong>
+          <table id="batTable"></table>
+        </section>
+        <section class="panel">
+          <strong>Team Balance</strong>
+          <table id="balanceTable"></table>
+        </section>
+      </div>
+    </section>
+
+    <section id="databaseView" class="view">
+      <div class="database-grid">
+        <aside class="panel filters">
+          <input id="dbSearch" class="input" placeholder="Search cricketers">
+          <select id="dbNation" class="input"></select>
+          <select id="dbDecade" class="input"></select>
+          <select id="dbRole" class="input">
+            <option value="all">All roles</option>
+            <option value="Batter">Batters</option>
+            <option value="Keeper">Keepers</option>
+            <option value="All-rounder">All-rounders</option>
+            <option value="Bowler">Bowlers</option>
+          </select>
+          <div class="db-count" id="dbCount"></div>
+        </aside>
+        <section class="player-grid" id="dbGrid"></section>
+      </div>
+    </section>
   </main>
+
   <script>
-    (async () => {
-      if (!("DecompressionStream" in window)) throw new Error("This browser cannot decompress the simulator payload");
-      const payload = `{% include_relative app.txt %}`;
-      const binary = atob(payload.replace(/\s+/g, ""));
-      const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
-      const html = await new Response(stream).text();
-      document.open();
-      document.write(html);
-      document.close();
-    })().catch((error) => {
-      document.querySelector("p").textContent = `The simulator could not be loaded: ${error.message}`;
+    const DECADES = ["1970s", "1980s", "1990s", "2000s", "2010s", "2020s"];
+    const NATIONS = ["India", "Australia", "England", "Pakistan", "West Indies", "Sri Lanka", "South Africa", "New Zealand", "Bangladesh", "Afghanistan", "Zimbabwe", "Ireland"];
+    const MODES = {
+      easy: { label: "Easy", visibleStats: true, skips: 3, qualityPenalty: 19, wicketMultiplier: 1.34, boundaryPenalty: 7 },
+      medium: { label: "Medium", visibleStats: true, skips: 1, qualityPenalty: 20, wicketMultiplier: 1.38, boundaryPenalty: 7 },
+      hard: { label: "Hard", visibleStats: false, skips: 1, qualityPenalty: 21, wicketMultiplier: 1.42, boundaryPenalty: 8 }
+    };
+    const POSITION_RULES = {
+      "Specialist Opener": [1, 2],
+      "Top Order": [1, 2, 3],
+      "Top/Middle": [2, 3, 4],
+      "Middle Order": [3, 4, 5],
+      "Middle/Finisher": [4, 5, 6],
+      "Finisher": [5, 6, 7],
+      "Batting All-rounder": [6, 7, 8],
+      "Bowling All-rounder": [7, 8],
+      "Bowling All-rounder Lower": [7, 8, 9],
+      "Bowler": [8, 9, 10, 11],
+      "Tailender": [9, 10, 11]
+    };
+
+    const RAW_PLAYERS = [
+      ["Sunil Gavaskar","India","1970s:94:62:16:18,1980s:90:60:14:18","Batter","Specialist Opener","anchor","part",false],
+      ["Kapil Dev","India","1980s:78:82:90:76,1990s:70:76:82:70","All-rounder","Bowling All-rounder Lower","finisher","new",false],
+      ["Sachin Tendulkar","India","1990s:96:88:38:44,2000s:98:90:34:42","Batter","Top Order","anchor","part",false],
+      ["Rahul Dravid","India","1990s:90:66:12:16,2000s:92:68:10:14","Batter","Top/Middle","anchor","part",false],
+      ["Sourav Ganguly","India","1990s:86:84:42:36,2000s:88:86:36:32","Batter","Top Order","aggressor","part",false],
+      ["Virender Sehwag","India","2000s:88:96:28:30,2010s:82:92:20:24","Batter","Specialist Opener","aggressor","part",false],
+      ["MS Dhoni","India","2000s:84:88:10:14,2010s:90:92:10:12","Keeper","Finisher","finisher","part",true],
+      ["Yuvraj Singh","India","2000s:86:92:66:64,2010s:82:88:58:58","All-rounder","Middle/Finisher","aggressor","middle",false],
+      ["Virat Kohli","India","2010s:98:88:10:12,2020s:94:86:8:10","Batter","Top Order","anchor","part",false],
+      ["Rohit Sharma","India","2010s:92:94:20:22,2020s:94:96:14:18","Batter","Specialist Opener","aggressor","part",false],
+      ["Ravindra Jadeja","India","2010s:78:78:86:84,2020s:82:82:88:86","All-rounder","Bowling All-rounder","finisher","middle",false],
+      ["Hardik Pandya","India","2010s:80:92:78:72,2020s:84:94:80:74","All-rounder","Batting All-rounder","finisher","death",false],
+      ["Jasprit Bumrah","India","2010s:30:28:96:96,2020s:32:32:98:98","Bowler","Bowler","tail","death",false],
+      ["Ravichandran Ashwin","India","2010s:58:54:88:92,2020s:62:56:86:90","Bowler","Bowling All-rounder Lower","tail","middle",false],
+
+      ["Greg Chappell","Australia","1970s:92:78:42:38,1980s:88:76:36:34","Batter","Top Order","anchor","part",false],
+      ["Dennis Lillee","Australia","1970s:28:34:96:82,1980s:26:32:92:78","Bowler","Tailender","tail","new",false],
+      ["Allan Border","Australia","1980s:90:72:38:36,1990s:86:70:32:34","Batter","Middle Order","anchor","part",false],
+      ["Dean Jones","Australia","1980s:86:82:18:18,1990s:84:80:14:16","Batter","Top/Middle","aggressor","part",false],
+      ["Steve Waugh","Australia","1990s:88:78:70:68,2000s:82:74:54:56","All-rounder","Middle Order","anchor","middle",false],
+      ["Shane Warne","Australia","1990s:42:54:94:98,2000s:44:56:92:96","Bowler","Bowler","tail","middle",false],
+      ["Glenn McGrath","Australia","1990s:24:24:96:90,2000s:22:22:94:88","Bowler","Tailender","tail","new",false],
+      ["Adam Gilchrist","Australia","1990s:86:94:8:10,2000s:92:98:8:10","Keeper","Specialist Opener","aggressor","part",true],
+      ["Ricky Ponting","Australia","1990s:88:84:24:26,2000s:96:90:18:22","Batter","Top Order","anchor","part",false],
+      ["Matthew Hayden","Australia","2000s:92:96:12:14","Batter","Specialist Opener","aggressor","part",false],
+      ["Andrew Symonds","Australia","2000s:84:94:76:70","All-rounder","Middle/Finisher","finisher","middle",false],
+      ["Mitchell Johnson","Australia","2000s:44:58:88:76,2010s:42:56:92:78","Bowler","Bowler","tail","new",false],
+      ["David Warner","Australia","2010s:92:96:12:14,2020s:88:94:8:10","Batter","Specialist Opener","aggressor","part",false],
+      ["Steven Smith","Australia","2010s:94:80:46:50,2020s:90:76:30:34","Batter","Top/Middle","anchor","part",false],
+      ["Glenn Maxwell","Australia","2010s:84:98:72:78,2020s:86:99:70:76","All-rounder","Middle/Finisher","finisher","middle",false],
+      ["Pat Cummins","Australia","2010s:46:58:92:86,2020s:50:62:94:88","Bowler","Bowler","tail","new",false],
+      ["Mitchell Starc","Australia","2010s:38:52:92:84,2020s:40:56:90:82","Bowler","Bowler","tail","new",false],
+
+      ["Geoff Boycott","England","1970s:88:54:12:16","Batter","Specialist Opener","anchor","part",false],
+      ["Ian Botham","England","1970s:78:84:88:78,1980s:84:88:90:82","All-rounder","Bowling All-rounder Lower","finisher","new",false],
+      ["David Gower","England","1980s:88:76:12:14","Batter","Top/Middle","anchor","part",false],
+      ["Graham Gooch","England","1980s:86:80:18:20,1990s:90:82:12:16","Batter","Specialist Opener","anchor","part",false],
+      ["Alec Stewart","England","1990s:84:76:8:10,2000s:80:74:8:10","Keeper","Top Order","anchor","part",true],
+      ["Andrew Flintoff","England","2000s:80:90:88:78","All-rounder","Bowling All-rounder Lower","finisher","death",false],
+      ["Kevin Pietersen","England","2000s:92:94:16:18,2010s:86:90:10:12","Batter","Top/Middle","aggressor","part",false],
+      ["James Anderson","England","2000s:18:18:88:86,2010s:20:18:92:90,2020s:18:16:90:88","Bowler","Tailender","tail","new",false],
+      ["Stuart Broad","England","2000s:34:52:86:80,2010s:30:48:90:84","Bowler","Bowler","tail","new",false],
+      ["Eoin Morgan","England","2010s:86:92:8:10","Batter","Middle/Finisher","finisher","part",false],
+      ["Joe Root","England","2010s:92:78:46:42,2020s:90:76:36:38","Batter","Top/Middle","anchor","middle",false],
+      ["Jos Buttler","England","2010s:88:98:8:10,2020s:92:99:8:10","Keeper","Top Order","aggressor","part",true],
+      ["Ben Stokes","England","2010s:86:92:84:78,2020s:84:90:78:74","All-rounder","Batting All-rounder","finisher","death",false],
+      ["Jofra Archer","England","2010s:34:48:88:88,2020s:34:50:86:86","Bowler","Bowler","tail","death",false],
+
+      ["Zaheer Abbas","Pakistan","1970s:92:82:12:16,1980s:88:78:10:14","Batter","Top Order","anchor","part",false],
+      ["Imran Khan","Pakistan","1970s:76:78:90:78,1980s:84:86:96:86,1990s:78:82:88:80","All-rounder","Bowling All-rounder","anchor","new",false],
+      ["Javed Miandad","Pakistan","1980s:92:76:18:18,1990s:88:72:14:16","Batter","Middle Order","anchor","part",false],
+      ["Wasim Akram","Pakistan","1980s:50:64:90:92,1990s:56:72:98:96,2000s:48:66:90:90","Bowler","Bowler","tail","new",false],
+      ["Waqar Younis","Pakistan","1990s:24:30:96:86,2000s:20:28:88:80","Bowler","Tailender","tail","death",false],
+      ["Inzamam-ul-Haq","Pakistan","1990s:90:84:8:10,2000s:86:82:8:10","Batter","Middle Order","anchor","part",false],
+      ["Shahid Afridi","Pakistan","1990s:72:98:78:84,2000s:76:99:82:88,2010s:70:96:80:84","All-rounder","Batting All-rounder","finisher","middle",false],
+      ["Shoaib Akhtar","Pakistan","1990s:22:28:90:76,2000s:20:26:94:78","Bowler","Tailender","tail","new",false],
+      ["Saqlain Mushtaq","Pakistan","1990s:34:38:88:94,2000s:30:34:84:90","Bowler","Bowler","tail","middle",false],
+      ["Younis Khan","Pakistan","2000s:88:74:8:10,2010s:86:72:8:10","Batter","Middle Order","anchor","part",false],
+      ["Misbah-ul-Haq","Pakistan","2000s:82:76:8:10,2010s:86:80:8:10","Batter","Middle/Finisher","anchor","part",false],
+      ["Babar Azam","Pakistan","2010s:88:78:8:10,2020s:94:82:8:10","Batter","Top Order","anchor","part",false],
+      ["Mohammad Rizwan","Pakistan","2020s:88:86:8:10","Keeper","Top Order","anchor","part",true],
+      ["Shaheen Afridi","Pakistan","2020s:36:54:90:84","Bowler","Bowler","tail","new",false],
+      ["Shadab Khan","Pakistan","2010s:70:78:82:86,2020s:74:82:84:88","All-rounder","Bowling All-rounder Lower","finisher","middle",false],
+
+      ["Clive Lloyd","West Indies","1970s:90:88:16:18","Batter","Middle Order","aggressor","part",false],
+      ["Viv Richards","West Indies","1970s:96:98:24:30,1980s:99:99:22:28","Batter","Top/Middle","aggressor","part",false],
+      ["Gordon Greenidge","West Indies","1970s:90:88:8:10,1980s:92:90:8:10","Batter","Specialist Opener","aggressor","part",false],
+      ["Desmond Haynes","West Indies","1980s:88:80:8:10,1990s:82:76:8:10","Batter","Specialist Opener","anchor","part",false],
+      ["Michael Holding","West Indies","1970s:22:28:96:84,1980s:20:26:92:82","Bowler","Tailender","tail","new",false],
+      ["Joel Garner","West Indies","1970s:28:34:94:90,1980s:26:32:92:88","Bowler","Tailender","tail","death",false],
+      ["Malcolm Marshall","West Indies","1980s:36:48:98:92,1990s:34:46:90:86","Bowler","Bowler","tail","new",false],
+      ["Courtney Walsh","West Indies","1980s:18:18:86:80,1990s:16:16:92:84,2000s:14:14:84:78","Bowler","Tailender","tail","new",false],
+      ["Curtly Ambrose","West Indies","1990s:18:20:96:88,2000s:16:18:86:80","Bowler","Tailender","tail","new",false],
+      ["Brian Lara","West Indies","1990s:98:92:8:10,2000s:94:90:8:10","Batter","Top/Middle","aggressor","part",false],
+      ["Chris Gayle","West Indies","2000s:88:98:58:58,2010s:86:99:52:54","All-rounder","Specialist Opener","aggressor","middle",false],
+      ["Shivnarine Chanderpaul","West Indies","2000s:90:76:8:10,2010s:84:72:8:10","Batter","Middle Order","anchor","part",false],
+      ["Kieron Pollard","West Indies","2010s:82:96:66:58,2020s:78:94:58:52","All-rounder","Middle/Finisher","finisher","death",false],
+      ["Andre Russell","West Indies","2010s:82:99:84:76,2020s:78:97:78:72","All-rounder","Batting All-rounder","finisher","death",false],
+      ["Sunil Narine","West Indies","2010s:66:84:88:94,2020s:70:88:84:92","All-rounder","Bowling All-rounder Lower","aggressor","middle",false],
+      ["Jason Holder","West Indies","2010s:72:74:84:78,2020s:74:76:82:78","All-rounder","Bowling All-rounder","steady","new",false],
+
+      ["Duleep Mendis","Sri Lanka","1980s:82:82:12:14","Batter","Middle Order","aggressor","part",false],
+      ["Arjuna Ranatunga","Sri Lanka","1980s:78:70:22:24,1990s:86:76:18:20","Batter","Middle Order","anchor","part",false],
+      ["Aravinda de Silva","Sri Lanka","1990s:92:90:54:56,2000s:84:84:40:42","All-rounder","Top/Middle","aggressor","middle",false],
+      ["Sanath Jayasuriya","Sri Lanka","1990s:88:98:78:76,2000s:86:96:72:72","All-rounder","Specialist Opener","aggressor","middle",false],
+      ["Muttiah Muralitharan","Sri Lanka","1990s:20:22:92:98,2000s:18:20:98:99,2010s:18:18:90:96","Bowler","Tailender","tail","middle",false],
+      ["Chaminda Vaas","Sri Lanka","1990s:44:54:88:84,2000s:48:58:86:82","Bowler","Bowler","tail","new",false],
+      ["Kumar Sangakkara","Sri Lanka","2000s:92:82:8:10,2010s:94:84:8:10","Keeper","Top/Middle","anchor","part",true],
+      ["Mahela Jayawardene","Sri Lanka","2000s:90:82:12:14,2010s:86:80:10:12","Batter","Middle Order","anchor","part",false],
+      ["Tillakaratne Dilshan","Sri Lanka","2000s:84:88:56:58,2010s:86:90:50:54","All-rounder","Top Order","aggressor","middle",false],
+      ["Lasith Malinga","Sri Lanka","2000s:18:24:88:94,2010s:18:22:92:98","Bowler","Tailender","tail","death",false],
+      ["Angelo Mathews","Sri Lanka","2010s:82:82:76:70,2020s:76:76:58:54","All-rounder","Middle/Finisher","anchor","death",false],
+      ["Wanindu Hasaranga","Sri Lanka","2020s:72:84:86:92","All-rounder","Bowling All-rounder Lower","finisher","middle",false],
+
+      ["Mike Procter","South Africa","1970s:82:88:94:84","All-rounder","Bowling All-rounder","aggressor","new",false],
+      ["Clive Rice","South Africa","1980s:78:80:84:76","All-rounder","Bowling All-rounder","steady","new",false],
+      ["Hansie Cronje","South Africa","1990s:82:78:62:62","All-rounder","Middle Order","anchor","middle",false],
+      ["Allan Donald","South Africa","1990s:18:20:94:82,2000s:16:18:86:76","Bowler","Tailender","tail","new",false],
+      ["Shaun Pollock","South Africa","1990s:56:62:90:88,2000s:58:64:88:88","All-rounder","Bowling All-rounder Lower","steady","new",false],
+      ["Jacques Kallis","South Africa","1990s:88:80:80:74,2000s:94:84:84:78,2010s:88:78:72:68","All-rounder","Top/Middle","anchor","new",false],
+      ["Herschelle Gibbs","South Africa","1990s:84:86:10:12,2000s:88:90:8:10","Batter","Specialist Opener","aggressor","part",false],
+      ["Graeme Smith","South Africa","2000s:88:78:8:10,2010s:84:76:8:10","Batter","Specialist Opener","anchor","part",false],
+      ["AB de Villiers","South Africa","2000s:90:92:8:10,2010s:98:99:8:10","Keeper","Middle Order","aggressor","part",true],
+      ["Hashim Amla","South Africa","2000s:86:76:8:10,2010s:92:80:8:10","Batter","Top Order","anchor","part",false],
+      ["Dale Steyn","South Africa","2000s:20:24:92:84,2010s:22:26:96:86","Bowler","Tailender","tail","new",false],
+      ["Quinton de Kock","South Africa","2010s:88:92:8:10,2020s:86:90:8:10","Keeper","Specialist Opener","aggressor","part",true],
+      ["Kagiso Rabada","South Africa","2010s:32:44:90:82,2020s:34:46:90:82","Bowler","Bowler","tail","new",false],
+      ["David Miller","South Africa","2010s:82:94:8:10,2020s:84:96:8:10","Batter","Finisher","finisher","part",false],
+
+      ["Glenn Turner","New Zealand","1970s:88:72:8:10","Batter","Specialist Opener","anchor","part",false],
+      ["Richard Hadlee","New Zealand","1970s:58:66:90:84,1980s:64:72:96:90,1990s:54:62:84:80","All-rounder","Bowling All-rounder Lower","steady","new",false],
+      ["Martin Crowe","New Zealand","1980s:88:82:20:22,1990s:90:84:16:18","Batter","Top/Middle","anchor","part",false],
+      ["Chris Cairns","New Zealand","1990s:78:90:84:74,2000s:76:88:78:70","All-rounder","Batting All-rounder","finisher","death",false],
+      ["Stephen Fleming","New Zealand","1990s:84:72:8:10,2000s:86:74:8:10","Batter","Top Order","anchor","part",false],
+      ["Daniel Vettori","New Zealand","1990s:54:54:82:88,2000s:62:60:86:92,2010s:58:56:82:88","All-rounder","Bowling All-rounder Lower","steady","middle",false],
+      ["Shane Bond","New Zealand","2000s:18:24:92:84","Bowler","Tailender","tail","new",false],
+      ["Brendon McCullum","New Zealand","2000s:84:92:8:10,2010s:88:98:8:10","Keeper","Specialist Opener","aggressor","part",true],
+      ["Ross Taylor","New Zealand","2000s:84:84:8:10,2010s:88:86:8:10","Batter","Middle Order","anchor","part",false],
+      ["Kane Williamson","New Zealand","2010s:94:78:34:36,2020s:90:76:26:30","Batter","Top Order","anchor","part",false],
+      ["Trent Boult","New Zealand","2010s:20:26:90:86,2020s:18:24:88:84","Bowler","Tailender","tail","new",false],
+      ["Tim Southee","New Zealand","2010s:34:52:86:82,2020s:32:50:82:78","Bowler","Bowler","tail","new",false],
+      ["James Neesham","New Zealand","2010s:76:86:74:70,2020s:74:84:70:68","All-rounder","Batting All-rounder","finisher","death",false],
+
+      ["Akram Khan","Bangladesh","1990s:72:66:8:10","Batter","Middle Order","anchor","part",false],
+      ["Aminul Islam","Bangladesh","1990s:74:68:26:28,2000s:70:64:22:24","Batter","Top/Middle","anchor","part",false],
+      ["Habibul Bashar","Bangladesh","2000s:76:70:8:10","Batter","Top Order","anchor","part",false],
+      ["Mashrafe Mortaza","Bangladesh","2000s:38:54:80:74,2010s:34:50:78:72","Bowler","Bowler","tail","new",false],
+      ["Shakib Al Hasan","Bangladesh","2000s:82:76:84:88,2010s:88:82:90:92,2020s:84:78:86:90","All-rounder","Batting All-rounder","anchor","middle",false],
+      ["Tamim Iqbal","Bangladesh","2000s:78:82:8:10,2010s:84:86:8:10,2020s:80:82:8:10","Batter","Specialist Opener","aggressor","part",false],
+      ["Mushfiqur Rahim","Bangladesh","2000s:76:70:8:10,2010s:84:78:8:10,2020s:82:76:8:10","Keeper","Middle Order","anchor","part",true],
+      ["Mahmudullah","Bangladesh","2010s:80:82:66:68,2020s:76:78:56:58","All-rounder","Middle/Finisher","finisher","middle",false],
+      ["Mustafizur Rahman","Bangladesh","2010s:18:20:84:90,2020s:18:20:82:88","Bowler","Tailender","tail","death",false],
+      ["Taskin Ahmed","Bangladesh","2010s:24:34:78:70,2020s:26:36:82:74","Bowler","Tailender","tail","new",false],
+      ["Litton Das","Bangladesh","2020s:82:84:8:10","Keeper","Top Order","aggressor","part",true],
+
+      ["Andy Flower","Zimbabwe","1990s:90:80:8:10,2000s:88:78:8:10","Keeper","Top/Middle","anchor","part",true],
+      ["Grant Flower","Zimbabwe","1990s:80:76:58:60,2000s:76:72:52:56","All-rounder","Top Order","anchor","middle",false],
+      ["Heath Streak","Zimbabwe","1990s:58:66:84:78,2000s:60:68:82:76","All-rounder","Bowling All-rounder Lower","steady","new",false],
+      ["Neil Johnson","Zimbabwe","1990s:78:84:76:70","All-rounder","Top Order","aggressor","new",false],
+      ["Alistair Campbell","Zimbabwe","1990s:76:72:8:10","Batter","Top Order","anchor","part",false],
+      ["Henry Olonga","Zimbabwe","1990s:18:24:78:66,2000s:16:22:74:62","Bowler","Tailender","tail","new",false],
+      ["Tatenda Taibu","Zimbabwe","2000s:76:70:8:10","Keeper","Middle Order","anchor","part",true],
+      ["Brendan Taylor","Zimbabwe","2000s:78:82:8:10,2010s:84:86:8:10","Keeper","Top/Middle","aggressor","part",true],
+      ["Sikandar Raza","Zimbabwe","2010s:78:84:76:80,2020s:84:90:80:84","All-rounder","Batting All-rounder","finisher","middle",false],
+      ["Sean Williams","Zimbabwe","2010s:80:76:72:76,2020s:82:78:70:74","All-rounder","Middle Order","anchor","middle",false],
+      ["Craig Ervine","Zimbabwe","2010s:76:76:8:10,2020s:78:78:8:10","Batter","Top/Middle","anchor","part",false],
+      ["Blessing Muzarabani","Zimbabwe","2020s:20:28:78:72","Bowler","Tailender","tail","new",false],
+
+      ["Mohammad Nabi","Afghanistan","2000s:72:78:78:82,2010s:78:86:84:88,2020s:76:84:80:84","All-rounder","Bowling All-rounder","finisher","middle",false],
+      ["Asghar Afghan","Afghanistan","2010s:72:76:8:10","Batter","Middle Order","anchor","part",false],
+      ["Mohammad Shahzad","Afghanistan","2010s:76:88:8:10","Keeper","Specialist Opener","aggressor","part",true],
+      ["Najibullah Zadran","Afghanistan","2010s:76:88:8:10,2020s:80:90:8:10","Batter","Finisher","finisher","part",false],
+      ["Rashid Khan","Afghanistan","2010s:62:82:90:96,2020s:66:86:92:98","All-rounder","Bowling All-rounder Lower","finisher","middle",false],
+      ["Mujeeb Ur Rahman","Afghanistan","2010s:24:34:84:92,2020s:24:34:84:92","Bowler","Tailender","tail","middle",false],
+      ["Gulbadin Naib","Afghanistan","2010s:70:78:72:68,2020s:68:76:70:66","All-rounder","Batting All-rounder","steady","death",false],
+      ["Rahmanullah Gurbaz","Afghanistan","2020s:82:92:8:10","Keeper","Specialist Opener","aggressor","part",true],
+      ["Ibrahim Zadran","Afghanistan","2020s:82:76:8:10","Batter","Top Order","anchor","part",false],
+      ["Fazalhaq Farooqi","Afghanistan","2020s:18:24:82:80","Bowler","Tailender","tail","new",false],
+
+      ["Ed Joyce","Ireland","2000s:78:72:8:10,2010s:80:74:8:10","Batter","Top Order","anchor","part",false],
+      ["William Porterfield","Ireland","2000s:74:70:8:10,2010s:76:72:8:10","Batter","Specialist Opener","anchor","part",false],
+      ["Kevin O'Brien","Ireland","2000s:76:88:70:64,2010s:80:92:68:62","All-rounder","Middle/Finisher","finisher","death",false],
+      ["Niall O'Brien","Ireland","2000s:72:70:8:10,2010s:74:72:8:10","Keeper","Top/Middle","anchor","part",true],
+      ["Boyd Rankin","Ireland","2000s:18:24:78:70,2010s:18:22:80:72","Bowler","Tailender","tail","new",false],
+      ["Paul Stirling","Ireland","2010s:82:90:52:54,2020s:84:92:46:50","All-rounder","Specialist Opener","aggressor","middle",false],
+      ["George Dockrell","Ireland","2010s:58:62:76:82,2020s:70:76:70:76","All-rounder","Bowling All-rounder Lower","steady","middle",false],
+      ["Andy Balbirnie","Ireland","2010s:76:74:8:10,2020s:78:76:8:10","Batter","Top Order","anchor","part",false],
+      ["Mark Adair","Ireland","2010s:62:74:76:72,2020s:66:78:78:74","All-rounder","Bowling All-rounder Lower","finisher","death",false],
+      ["Harry Tector","Ireland","2020s:80:82:18:18","Batter","Middle Order","anchor","part",false],
+      ["Josh Little","Ireland","2020s:18:22:82:78","Bowler","Tailender","tail","new",false]
+    ];
+
+    const SUPPLEMENTAL_PLAYERS = [
+      ["Gundappa Viswanath","India","1970s:90:72:8:10,1980s:84:68:8:10","Batter","Middle Order","anchor","part",false],
+      ["Dilip Vengsarkar","India","1980s:88:74:8:10","Batter","Top/Middle","anchor","part",false],
+      ["Mohinder Amarnath","India","1980s:82:74:72:66","All-rounder","Top/Middle","anchor","middle",false],
+      ["Mohammad Azharuddin","India","1990s:88:82:8:10,2000s:80:76:8:10","Batter","Middle Order","anchor","part",false],
+      ["Anil Kumble","India","1990s:34:38:90:88,2000s:36:40:88:86","Bowler","Tailender","tail","middle",false],
+      ["Javagal Srinath","India","1990s:28:34:86:76,2000s:24:30:80:70","Bowler","Tailender","tail","new",false],
+      ["Zaheer Khan","India","2000s:28:34:86:82,2010s:26:32:84:80","Bowler","Tailender","tail","new",false],
+      ["Harbhajan Singh","India","2000s:42:52:84:86,2010s:38:48:78:82","Bowler","Bowler","tail","middle",false],
+      ["Gautam Gambhir","India","2000s:86:78:8:10,2010s:82:76:8:10","Batter","Top Order","anchor","part",false],
+      ["Suresh Raina","India","2000s:80:88:48:48,2010s:84:90:44:46","All-rounder","Middle/Finisher","aggressor","middle",false],
+      ["Shikhar Dhawan","India","2010s:88:88:8:10,2020s:82:84:8:10","Batter","Specialist Opener","aggressor","part",false],
+      ["KL Rahul","India","2010s:84:86:8:10,2020s:88:88:8:10","Keeper","Top Order","anchor","part",true],
+      ["Rishabh Pant","India","2020s:86:94:8:10","Keeper","Middle/Finisher","finisher","part",true],
+      ["Suryakumar Yadav","India","2020s:88:98:8:10","Batter","Middle Order","aggressor","part",false],
+      ["Kuldeep Yadav","India","2010s:24:30:82:90,2020s:24:32:86:92","Bowler","Tailender","tail","middle",false],
+      ["Mohammed Shami","India","2010s:22:30:86:78,2020s:22:30:90:80","Bowler","Tailender","tail","new",false],
+      ["Mohammed Siraj","India","2020s:20:28:86:78","Bowler","Tailender","tail","new",false],
+
+      ["Mark Waugh","Australia","1990s:88:84:46:48,2000s:82:78:34:36","Batter","Top Order","anchor","middle",false],
+      ["Michael Bevan","Australia","1990s:88:76:42:40,2000s:84:74:36:36","Batter","Middle/Finisher","anchor","part",false],
+      ["Damien Martyn","Australia","2000s:86:78:8:10","Batter","Middle Order","anchor","part",false],
+      ["Michael Clarke","Australia","2000s:86:78:46:50,2010s:88:78:38:42","Batter","Middle Order","anchor","middle",false],
+      ["Mike Hussey","Australia","2000s:88:82:8:10,2010s:84:80:8:10","Batter","Middle/Finisher","finisher","part",false],
+      ["Brett Lee","Australia","2000s:36:54:90:80,2010s:34:52:84:76","Bowler","Bowler","tail","new",false],
+      ["Jason Gillespie","Australia","1990s:26:34:86:78,2000s:28:36:88:80","Bowler","Tailender","tail","new",false],
+      ["Brad Haddin","Australia","2000s:78:84:8:10,2010s:76:82:8:10","Keeper","Middle/Finisher","aggressor","part",true],
+      ["Mitchell Marsh","Australia","2010s:78:88:76:70,2020s:84:92:72:68","All-rounder","Batting All-rounder","aggressor","death",false],
+      ["Marcus Stoinis","Australia","2010s:78:90:70:66,2020s:80:92:68:64","All-rounder","Middle/Finisher","finisher","death",false],
+      ["Travis Head","Australia","2020s:90:96:18:20","Batter","Specialist Opener","aggressor","part",false],
+      ["Marnus Labuschagne","Australia","2020s:88:74:38:40","Batter","Top/Middle","anchor","part",false],
+      ["Josh Hazlewood","Australia","2010s:18:22:88:84,2020s:18:22:90:86","Bowler","Tailender","tail","new",false],
+      ["Nathan Lyon","Australia","2010s:30:36:86:88,2020s:30:36:84:86","Bowler","Tailender","tail","middle",false],
+
+      ["Mike Gatting","England","1980s:84:76:12:14,1990s:78:72:10:12","Batter","Middle Order","anchor","part",false],
+      ["Graham Thorpe","England","1990s:86:76:8:10,2000s:84:74:8:10","Batter","Middle Order","anchor","part",false],
+      ["Nasser Hussain","England","1990s:80:70:8:10,2000s:78:68:8:10","Batter","Top/Middle","anchor","part",false],
+      ["Marcus Trescothick","England","2000s:86:84:8:10","Batter","Specialist Opener","aggressor","part",false],
+      ["Michael Vaughan","England","2000s:84:76:34:34","Batter","Top Order","anchor","part",false],
+      ["Andrew Strauss","England","2000s:84:76:8:10,2010s:80:72:8:10","Batter","Specialist Opener","anchor","part",false],
+      ["Alastair Cook","England","2000s:84:68:8:10,2010s:88:70:8:10","Batter","Specialist Opener","anchor","part",false],
+      ["Jonny Bairstow","England","2010s:84:90:8:10,2020s:84:92:8:10","Keeper","Top Order","aggressor","part",true],
+      ["Moeen Ali","England","2010s:78:86:78:84,2020s:76:84:74:82","All-rounder","Batting All-rounder","aggressor","middle",false],
+      ["Adil Rashid","England","2010s:34:44:84:92,2020s:32:42:82:90","Bowler","Bowler","tail","middle",false],
+      ["Mark Wood","England","2010s:24:32:84:74,2020s:24:32:88:76","Bowler","Tailender","tail","new",false],
+      ["Liam Livingstone","England","2020s:80:96:64:70","All-rounder","Middle/Finisher","finisher","middle",false],
+      ["Sam Curran","England","2010s:66:74:78:76,2020s:70:78:82:80","All-rounder","Bowling All-rounder Lower","finisher","death",false],
+      ["Harry Brook","England","2020s:86:92:8:10","Batter","Middle Order","aggressor","part",false],
+      ["Phil Salt","England","2020s:82:94:8:10","Keeper","Specialist Opener","aggressor","part",true],
+
+      ["Majid Khan","Pakistan","1970s:88:82:18:20,1980s:82:76:14:16","Batter","Top Order","aggressor","part",false],
+      ["Mudassar Nazar","Pakistan","1970s:76:66:58:54,1980s:80:68:62:58","All-rounder","Top Order","anchor","new",false],
+      ["Abdul Qadir","Pakistan","1980s:30:38:88:96,1990s:26:34:80:90","Bowler","Tailender","tail","middle",false],
+      ["Saleem Malik","Pakistan","1980s:84:78:28:30,1990s:86:80:24:26","Batter","Middle Order","anchor","part",false],
+      ["Moin Khan","Pakistan","1990s:74:82:8:10,2000s:70:78:8:10","Keeper","Finisher","finisher","part",true],
+      ["Saeed Anwar","Pakistan","1990s:90:90:8:10,2000s:84:84:8:10","Batter","Specialist Opener","aggressor","part",false],
+      ["Mohammad Yousuf","Pakistan","2000s:92:80:8:10","Batter","Top/Middle","anchor","part",false],
+      ["Mushtaq Ahmed","Pakistan","1990s:28:34:84:92,2000s:24:30:78:88","Bowler","Tailender","tail","middle",false],
+      ["Azhar Mahmood","Pakistan","1990s:74:82:80:72,2000s:76:84:76:70","All-rounder","Bowling All-rounder Lower","finisher","death",false],
+      ["Shoaib Malik","Pakistan","2000s:80:82:68:70,2010s:78:80:58:62","All-rounder","Middle Order","anchor","middle",false],
+      ["Mohammad Hafeez","Pakistan","2000s:78:82:72:78,2010s:82:84:74:80","All-rounder","Top Order","anchor","middle",false],
+      ["Umar Gul","Pakistan","2000s:22:30:86:82,2010s:20:28:82:78","Bowler","Tailender","tail","death",false],
+      ["Sarfaraz Ahmed","Pakistan","2010s:78:74:8:10,2020s:72:70:8:10","Keeper","Middle Order","anchor","part",true],
+      ["Fakhar Zaman","Pakistan","2010s:82:92:8:10,2020s:84:94:8:10","Batter","Specialist Opener","aggressor","part",false],
+      ["Haris Rauf","Pakistan","2020s:18:24:84:78","Bowler","Tailender","tail","death",false],
+      ["Naseem Shah","Pakistan","2020s:20:28:84:76","Bowler","Tailender","tail","new",false],
+
+      ["Alvin Kallicharran","West Indies","1970s:88:82:8:10,1980s:82:78:8:10","Batter","Top/Middle","anchor","part",false],
+      ["Lawrence Rowe","West Indies","1970s:86:84:8:10","Batter","Top Order","aggressor","part",false],
+      ["Andy Roberts","West Indies","1970s:24:30:94:82,1980s:22:28:88:78","Bowler","Tailender","tail","new",false],
+      ["Colin Croft","West Indies","1970s:20:26:90:78,1980s:18:24:84:74","Bowler","Tailender","tail","new",false],
+      ["Richie Richardson","West Indies","1980s:86:82:8:10,1990s:84:80:8:10","Batter","Top Order","anchor","part",false],
+      ["Carl Hooper","West Indies","1990s:84:86:76:82,2000s:80:82:68:76","All-rounder","Middle Order","anchor","middle",false],
+      ["Ian Bishop","West Indies","1990s:20:28:90:80","Bowler","Tailender","tail","new",false],
+      ["Jimmy Adams","West Indies","1990s:82:72:48:50,2000s:76:68:38:42","Batter","Middle Order","anchor","part",false],
+      ["Ramnaresh Sarwan","West Indies","2000s:86:78:8:10,2010s:78:72:8:10","Batter","Top/Middle","anchor","part",false],
+      ["Dwayne Bravo","West Indies","2000s:78:86:80:84,2010s:76:84:84:88","All-rounder","Batting All-rounder","finisher","death",false],
+      ["Marlon Samuels","West Indies","2000s:80:84:52:56,2010s:82:86:48:54","All-rounder","Middle Order","anchor","middle",false],
+      ["Nicholas Pooran","West Indies","2020s:84:96:8:10","Keeper","Middle/Finisher","finisher","part",true],
+      ["Shimron Hetmyer","West Indies","2010s:78:90:8:10,2020s:80:92:8:10","Batter","Middle/Finisher","aggressor","part",false],
+      ["Alzarri Joseph","West Indies","2010s:28:38:82:74,2020s:30:40:84:76","Bowler","Tailender","tail","new",false],
+      ["Shai Hope","West Indies","2010s:82:74:8:10,2020s:84:76:8:10","Keeper","Top Order","anchor","part",true],
+
+      ["Roy Dias","Sri Lanka","1980s:84:74:8:10","Batter","Top/Middle","anchor","part",false],
+      ["Roshan Mahanama","Sri Lanka","1990s:80:72:8:10","Batter","Top Order","anchor","part",false],
+      ["Hashan Tillakaratne","Sri Lanka","1990s:80:68:8:10,2000s:76:66:8:10","Keeper","Middle Order","anchor","part",true],
+      ["Romesh Kaluwitharana","Sri Lanka","1990s:78:90:8:10","Keeper","Specialist Opener","aggressor","part",true],
+      ["Marvan Atapattu","Sri Lanka","1990s:82:72:8:10,2000s:86:74:8:10","Batter","Top Order","anchor","part",false],
+      ["Nuwan Kulasekara","Sri Lanka","2000s:40:54:82:80,2010s:38:52:80:78","Bowler","Bowler","tail","new",false],
+      ["Rangana Herath","Sri Lanka","2000s:26:32:82:88,2010s:28:34:86:92","Bowler","Tailender","tail","middle",false],
+      ["Thisara Perera","Sri Lanka","2010s:74:90:76:72,2020s:68:84:66:64","All-rounder","Batting All-rounder","finisher","death",false],
+      ["Upul Tharanga","Sri Lanka","2000s:80:82:8:10,2010s:78:80:8:10","Batter","Top Order","anchor","part",false],
+      ["Dinesh Chandimal","Sri Lanka","2010s:80:76:8:10,2020s:78:74:8:10","Keeper","Middle Order","anchor","part",true],
+      ["Kusal Perera","Sri Lanka","2010s:82:92:8:10,2020s:80:90:8:10","Keeper","Specialist Opener","aggressor","part",true],
+      ["Dushmantha Chameera","Sri Lanka","2010s:20:28:82:74,2020s:22:30:84:76","Bowler","Tailender","tail","new",false],
+      ["Maheesh Theekshana","Sri Lanka","2020s:24:30:82:90","Bowler","Tailender","tail","middle",false],
+      ["Pathum Nissanka","Sri Lanka","2020s:84:80:8:10","Batter","Top Order","anchor","part",false],
+      ["Matheesha Pathirana","Sri Lanka","2020s:18:24:82:88","Bowler","Tailender","tail","death",false],
+
+      ["Barry Richards","South Africa","1970s:96:92:8:10","Batter","Specialist Opener","aggressor","part",false],
+      ["Peter Kirsten","South Africa","1980s:82:74:18:20,1990s:78:70:14:16","Batter","Top Order","anchor","part",false],
+      ["Kepler Wessels","South Africa","1980s:84:72:8:10,1990s:82:70:8:10","Batter","Specialist Opener","anchor","part",false],
+      ["Jonty Rhodes","South Africa","1990s:82:78:8:10,2000s:78:76:8:10","Batter","Middle Order","anchor","part",false],
+      ["Gary Kirsten","South Africa","1990s:84:76:8:10,2000s:82:74:8:10","Batter","Specialist Opener","anchor","part",false],
+      ["Mark Boucher","South Africa","1990s:72:78:8:10,2000s:76:82:8:10","Keeper","Middle/Finisher","steady","part",true],
+      ["Lance Klusener","South Africa","1990s:82:94:82:76,2000s:76:88:76:70","All-rounder","Batting All-rounder","finisher","death",false],
+      ["Makhaya Ntini","South Africa","2000s:18:22:88:78,2010s:16:20:78:70","Bowler","Tailender","tail","new",false],
+      ["Morne Morkel","South Africa","2000s:20:26:84:78,2010s:20:26:86:80","Bowler","Tailender","tail","new",false],
+      ["Faf du Plessis","South Africa","2010s:86:86:8:10,2020s:82:84:8:10","Batter","Top/Middle","anchor","part",false],
+      ["JP Duminy","South Africa","2000s:78:80:68:72,2010s:82:84:70:74","All-rounder","Middle/Finisher","anchor","middle",false],
+      ["Imran Tahir","South Africa","2010s:18:22:84:94,2020s:16:20:78:90","Bowler","Tailender","tail","middle",false],
+      ["Tabraiz Shamsi","South Africa","2010s:16:20:78:90,2020s:16:20:82:92","Bowler","Tailender","tail","middle",false],
+      ["Aiden Markram","South Africa","2010s:78:80:46:48,2020s:84:86:58:62","All-rounder","Top Order","anchor","middle",false],
+      ["Heinrich Klaasen","South Africa","2020s:86:98:8:10","Keeper","Middle/Finisher","finisher","part",true],
+      ["Marco Jansen","South Africa","2020s:62:76:84:78","All-rounder","Bowling All-rounder Lower","finisher","new",false],
+      ["Anrich Nortje","South Africa","2020s:18:24:86:74","Bowler","Tailender","tail","new",false],
+
+      ["Bevan Congdon","New Zealand","1970s:82:70:48:44","All-rounder","Top/Middle","anchor","middle",false],
+      ["John Wright","New Zealand","1980s:84:70:8:10,1990s:78:66:8:10","Batter","Specialist Opener","anchor","part",false],
+      ["Jeremy Coney","New Zealand","1980s:80:70:68:64","All-rounder","Middle Order","steady","middle",false],
+      ["Nathan Astle","New Zealand","1990s:82:88:58:56,2000s:82:86:50:50","All-rounder","Top Order","aggressor","middle",false],
+      ["Craig McMillan","New Zealand","1990s:78:86:46:46,2000s:78:84:42:44","Batter","Middle/Finisher","finisher","part",false],
+      ["Chris Harris","New Zealand","1990s:76:76:78:82,2000s:72:72:70:76","All-rounder","Bowling All-rounder","steady","middle",false],
+      ["Lou Vincent","New Zealand","2000s:76:80:8:10","Batter","Top Order","aggressor","part",false],
+      ["Kyle Mills","New Zealand","2000s:28:38:82:80,2010s:26:36:78:76","Bowler","Bowler","tail","new",false],
+      ["Jacob Oram","New Zealand","2000s:76:86:80:74,2010s:70:80:72:68","All-rounder","Bowling All-rounder","finisher","death",false],
+      ["Martin Guptill","New Zealand","2010s:86:94:8:10,2020s:80:90:8:10","Batter","Specialist Opener","aggressor","part",false],
+      ["Corey Anderson","New Zealand","2010s:76:92:70:66","All-rounder","Batting All-rounder","finisher","death",false],
+      ["Tom Latham","New Zealand","2010s:82:74:8:10,2020s:82:74:8:10","Keeper","Top/Middle","anchor","part",true],
+      ["Devon Conway","New Zealand","2020s:86:82:8:10","Keeper","Top Order","anchor","part",true],
+      ["Daryl Mitchell","New Zealand","2020s:84:86:58:56","All-rounder","Middle Order","anchor","death",false],
+      ["Lockie Ferguson","New Zealand","2010s:20:28:84:76,2020s:20:28:86:78","Bowler","Tailender","tail","death",false],
+      ["Mitchell Santner","New Zealand","2010s:68:74:80:86,2020s:70:76:82:88","All-rounder","Bowling All-rounder","steady","middle",false],
+
+      ["Khaled Mashud","Bangladesh","2000s:68:64:8:10","Keeper","Middle Order","steady","part",true],
+      ["Mohammad Rafique","Bangladesh","2000s:54:60:78:84","All-rounder","Bowling All-rounder Lower","steady","middle",false],
+      ["Mohammad Ashraful","Bangladesh","2000s:78:82:18:20,2010s:70:76:14:16","Batter","Top/Middle","aggressor","part",false],
+      ["Abdur Razzak","Bangladesh","2000s:28:34:78:84,2010s:26:32:76:82","Bowler","Tailender","tail","middle",false],
+      ["Shahriar Nafees","Bangladesh","2000s:76:74:8:10,2010s:70:70:8:10","Batter","Top Order","anchor","part",false],
+      ["Nasir Hossain","Bangladesh","2010s:72:76:64:66","All-rounder","Middle Order","steady","middle",false],
+      ["Rubel Hossain","Bangladesh","2010s:18:24:78:70","Bowler","Tailender","tail","new",false],
+      ["Soumya Sarkar","Bangladesh","2010s:76:84:54:54,2020s:72:80:46:48","All-rounder","Top Order","aggressor","middle",false],
+      ["Sabbir Rahman","Bangladesh","2010s:74:84:8:10","Batter","Middle/Finisher","aggressor","part",false],
+      ["Mehidy Hasan Miraz","Bangladesh","2010s:66:68:78:84,2020s:74:76:82:86","All-rounder","Bowling All-rounder Lower","steady","middle",false],
+      ["Mohammad Saifuddin","Bangladesh","2010s:62:74:76:70,2020s:60:72:74:68","All-rounder","Bowling All-rounder Lower","finisher","death",false],
+      ["Towhid Hridoy","Bangladesh","2020s:78:82:8:10","Batter","Middle Order","anchor","part",false],
+      ["Shoriful Islam","Bangladesh","2020s:18:24:78:76","Bowler","Tailender","tail","new",false],
+
+      ["Dave Houghton","Zimbabwe","1980s:82:76:8:10,1990s:80:74:8:10","Keeper","Top/Middle","anchor","part",true],
+      ["Eddo Brandes","Zimbabwe","1990s:30:42:78:72","Bowler","Bowler","tail","new",false],
+      ["Paul Strang","Zimbabwe","1990s:50:56:76:84","All-rounder","Bowling All-rounder Lower","steady","middle",false],
+      ["Guy Whittall","Zimbabwe","1990s:76:78:68:64,2000s:72:74:58:56","All-rounder","Middle Order","steady","middle",false],
+      ["Murray Goodwin","Zimbabwe","1990s:82:78:8:10,2000s:78:76:8:10","Batter","Top/Middle","anchor","part",false],
+      ["Andy Blignaut","Zimbabwe","2000s:68:82:76:72","All-rounder","Bowling All-rounder Lower","finisher","new",false],
+      ["Hamilton Masakadza","Zimbabwe","2000s:78:80:36:36,2010s:80:82:30:32","Batter","Top Order","anchor","part",false],
+      ["Elton Chigumbura","Zimbabwe","2000s:72:86:74:68,2010s:70:84:66:62","All-rounder","Batting All-rounder","finisher","death",false],
+      ["Prosper Utseya","Zimbabwe","2000s:42:46:76:82,2010s:38:42:72:80","Bowler","Bowling All-rounder Lower","tail","middle",false],
+      ["Kyle Jarvis","Zimbabwe","2010s:20:28:76:70,2020s:18:26:70:66","Bowler","Tailender","tail","new",false],
+      ["Ryan Burl","Zimbabwe","2010s:70:82:66:72,2020s:74:86:70:76","All-rounder","Batting All-rounder","finisher","middle",false],
+      ["Richard Ngarava","Zimbabwe","2020s:18:24:76:74","Bowler","Tailender","tail","new",false],
+
+      ["Samiullah Shinwari","Afghanistan","2010s:72:80:58:62,2020s:68:76:48:54","All-rounder","Middle/Finisher","finisher","middle",false],
+      ["Dawlat Zadran","Afghanistan","2010s:18:24:78:70","Bowler","Tailender","tail","new",false],
+      ["Hamid Hassan","Afghanistan","2010s:18:24:80:72","Bowler","Tailender","tail","new",false],
+      ["Noor Ali Zadran","Afghanistan","2010s:72:74:8:10","Batter","Top Order","anchor","part",false],
+      ["Karim Janat","Afghanistan","2010s:66:78:72:68,2020s:70:82:74:70","All-rounder","Batting All-rounder","finisher","death",false],
+      ["Naveen-ul-Haq","Afghanistan","2020s:18:24:82:84","Bowler","Tailender","tail","death",false],
+      ["Noor Ahmad","Afghanistan","2020s:18:24:80:90","Bowler","Tailender","tail","middle",false],
+      ["Azmatullah Omarzai","Afghanistan","2020s:76:86:78:72","All-rounder","Batting All-rounder","finisher","new",false],
+      ["Ikram Alikhil","Afghanistan","2020s:70:68:8:10","Keeper","Middle Order","steady","part",true],
+      ["Hazratullah Zazai","Afghanistan","2010s:76:94:8:10,2020s:74:92:8:10","Batter","Specialist Opener","aggressor","part",false],
+      ["Rahmat Shah","Afghanistan","2010s:76:70:8:10,2020s:78:72:8:10","Batter","Top/Middle","anchor","part",false],
+      ["Qais Ahmad","Afghanistan","2020s:24:34:76:88","Bowler","Tailender","tail","middle",false],
+
+      ["Trent Johnston","Ireland","2000s:54:64:74:70,2010s:50:60:68:66","All-rounder","Bowling All-rounder Lower","steady","new",false],
+      ["Andre Botha","Ireland","2000s:70:72:70:68","All-rounder","Middle Order","steady","middle",false],
+      ["John Mooney","Ireland","2000s:68:76:70:66,2010s:66:74:66:64","All-rounder","Batting All-rounder","finisher","death",false],
+      ["Alex Cusack","Ireland","2000s:60:64:74:78,2010s:58:62:72:76","All-rounder","Bowling All-rounder Lower","steady","middle",false],
+      ["Gary Wilson","Ireland","2000s:70:74:8:10,2010s:72:76:8:10","Keeper","Middle Order","steady","part",true],
+      ["Tim Murtagh","Ireland","2010s:18:24:76:76","Bowler","Tailender","tail","new",false],
+      ["Simi Singh","Ireland","2010s:68:72:72:80,2020s:66:70:68:76","All-rounder","Bowling All-rounder Lower","steady","middle",false],
+      ["Lorcan Tucker","Ireland","2020s:76:80:8:10","Keeper","Middle Order","anchor","part",true],
+      ["Curtis Campher","Ireland","2020s:74:80:70:68","All-rounder","Middle Order","steady","death",false],
+      ["Gareth Delany","Ireland","2020s:72:84:66:72","All-rounder","Batting All-rounder","aggressor","middle",false],
+      ["Barry McCarthy","Ireland","2010s:28:40:74:70,2020s:30:42:76:72","Bowler","Bowler","tail","new",false],
+      ["Craig Young","Ireland","2010s:18:24:72:68,2020s:18:24:74:70","Bowler","Tailender","tail","new",false]
+    ];
+
+    function makeDatabase() {
+      const cards = [];
+      [...RAW_PLAYERS, ...SUPPLEMENTAL_PLAYERS].forEach((row) => {
+        const [name, nation, eraText, type, batRole, archetype, bowlType, keeper] = row;
+        eraText.split(",").forEach((part) => {
+          const [decade, batSkill, batPower, bowlSkill, bowlVariation] = part.split(":");
+          cards.push({
+            id: `${name}-${nation}-${decade}`.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+            baseName: name,
+            name: `${name} (${decade})`,
+            nation,
+            decade,
+            type,
+            batRole,
+            archetype,
+            bowlType,
+            keeper,
+            positions: POSITION_RULES[batRole],
+            batSkill: Number(batSkill),
+            batPower: Number(batPower),
+            bowlSkill: Number(bowlSkill),
+            bowlVariation: Number(bowlVariation)
+          });
+        });
+      });
+      return cards;
+    }
+
+    const DB = makeDatabase();
+    const state = {
+      mode: "easy",
+      skipsLeft: MODES.easy.skips,
+      xi: Array(11).fill(null),
+      draw: null,
+      pendingCardId: null,
+      spinning: false,
+      simSpeed: 1,
+      simRunning: false,
+      statusType: "",
+      status: "Draw a country and decade, then choose an eligible player card.",
+      match: null,
+      dbSearch: "",
+      dbNation: "all",
+      dbDecade: "all",
+      dbRole: "all"
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const cardById = (id) => DB.find((card) => card.id === id);
+    const selectedCards = () => state.xi.filter(Boolean).map(cardById);
+    const isTaken = (card) => selectedCards().some((selected) => selected.baseName === card.baseName);
+    const availableSlotsFor = (card) => card.positions.filter((pos) => !state.xi[pos - 1]);
+    const hasWicketkeeper = () => selectedCards().some((card) => card.keeper);
+    const playableSlotsFor = (card) => availableSlotsFor(card).filter((slot) => preservesKeeperPath(card, slot));
+    const visibleStats = () => MODES[state.mode].visibleStats;
+    let simulationTimer = null;
+
+    function setStatus(text, type = "") {
+      state.status = text;
+      state.statusType = type;
+      $("status").textContent = text;
+      $("status").className = `status-line ${type}`;
+    }
+
+    function render() {
+      renderModes();
+      renderViews();
+      renderDraw();
+      renderMetrics();
+      renderXI();
+      renderPlayers();
+      renderSimulator();
+      renderDatabase();
+    }
+
+    function renderModes() {
+      document.querySelectorAll(".mode-switch button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.mode === state.mode);
+        button.onclick = () => {
+          if (button.dataset.mode === state.mode) return;
+          setMode(button.dataset.mode);
+        };
+      });
+      document.querySelectorAll(".mode-card").forEach((button) => {
+        button.classList.toggle("active", button.dataset.modeChoice === state.mode);
+        button.onclick = () => setMode(button.dataset.modeChoice);
+      });
+      $("modeHint").textContent = visibleStats() ? `Stats visible, ${state.skipsLeft} skips left` : `Stats hidden, ${state.skipsLeft} skip left`;
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      state.skipsLeft = MODES[state.mode].skips;
+      setStatus(`${MODES[state.mode].label} mode selected. Skips reset to ${state.skipsLeft}.`);
+      render();
+    }
+
+    function renderViews() {
+      document.querySelectorAll(".nav button").forEach((button) => {
+        button.onclick = () => {
+          goToView(button.dataset.view);
+        };
+      });
+    }
+
+    function goToView(viewName) {
+      document.querySelectorAll(".nav button").forEach((item) => item.classList.toggle("active", item.dataset.view === viewName));
+      document.querySelectorAll(".view").forEach((view) => view.classList.toggle("active", view.id === `${viewName}View`));
+    }
+
+    function renderDraw() {
+      $("drawTitle").textContent = state.draw ? `${state.draw.nation}` : "No draw";
+      $("drawSub").textContent = state.draw ? `${state.draw.decade}. Select one eligible card.` : "Draw a country and decade";
+      $("skipBtn").textContent = `Skip Draw (${state.skipsLeft})`;
+      $("skipBtn").disabled = !state.draw || state.skipsLeft <= 0 || state.spinning;
+      $("drawBtn").disabled = state.spinning || selectedCards().length >= 11;
+      $("drawBtn").textContent = state.spinning ? "Spinning..." : "Spin Country + Decade";
+      $("nationReel").classList.toggle("spinning", state.spinning);
+      $("decadeReel").classList.toggle("spinning", state.spinning);
+      if (!state.spinning) {
+        $("nationReel").querySelector("strong").textContent = state.draw ? state.draw.nation : "Ready";
+        $("decadeReel").querySelector("strong").textContent = state.draw ? state.draw.decade : "Ready";
+      }
+      $("slotHint").textContent = `${selectedCards().length}/11 selected. Multi-position cards ask you to choose their batting slot.`;
+      $("poolHint").textContent = state.draw ? `${state.draw.nation}, ${state.draw.decade}` : "Draw a nation and decade.";
+      $("draftStartSimBtn").disabled = !teamCanSimulate();
+      $("draftFooterText").textContent = draftFooterMessage();
+      $("status").textContent = state.status;
+      $("status").className = `status-line ${state.statusType}`;
+      renderPositionChoice();
+    }
+
+    function teamCanSimulate() {
+      return selectedCards().length === 11 && hasWicketkeeper();
+    }
+
+    function draftFooterMessage() {
+      const remaining = 11 - selectedCards().length;
+      if (remaining > 0) return `Select ${remaining} more player${remaining === 1 ? "" : "s"} to unlock simulation. A wicketkeeper is mandatory.`;
+      if (!hasWicketkeeper()) return "XI has 11 players but no wicketkeeper. Remove a player and draft a keeper.";
+      return "Your XI is complete, including a wicketkeeper. Start the innings when ready.";
+    }
+
+    function renderMetrics() {
+      const score = teamBalance();
+      const stat = (label, value) => `<div class="metric"><strong>${value}</strong><span>${label}</span></div>`;
+      const hidden = !visibleStats();
+      $("metrics").innerHTML = [
+        stat("XI", `${selectedCards().length}/11`),
+        stat("Batting", hidden ? "Hidden" : score.batting),
+        stat("Bowling", hidden ? "Hidden" : score.bowling),
+        stat("Balance", hidden ? "Hidden" : score.balance)
+      ].join("");
+    }
+
+    function renderXI() {
+      $("xiGrid").innerHTML = state.xi.map((id, index) => {
+        const slot = index + 1;
+        const card = id ? cardById(id) : null;
+        const filled = card ? "filled" : "";
+        const note = card ? `${card.nation}, ${card.decade}` : roleForSlot(slot);
+        return `<button class="slot ${filled}" data-slot="${slot}">
+          <span class="slot-num">No. ${slot}</span>
+          <span class="slot-name">${card ? card.baseName : "Empty"}</span>
+          <span class="slot-note">${note}</span>
+          ${card ? `<span class="slot-remove" data-remove="${slot}">x</span>` : ""}
+        </button>`;
+      }).join("");
+
+      $("xiGrid").querySelectorAll(".slot").forEach((button) => {
+        button.onclick = (event) => {
+          const slot = Number(button.dataset.slot);
+          if (event.target.dataset.remove) {
+            removeSlot(slot);
+            return;
+          }
+          setStatus("Pick from the current draw. If the card fits multiple open slots, choose the batting position.");
+          render();
+        };
+      });
+    }
+
+    function renderPlayers() {
+      if (!state.draw) {
+        $("playerGrid").innerHTML = `<div class="empty">No draw active.</div>`;
+        return;
+      }
+
+      const pool = DB
+        .filter((card) => card.nation === state.draw.nation && card.decade === state.draw.decade)
+        .sort((a, b) => cardOverall(b) - cardOverall(a));
+
+      $("playerGrid").innerHTML = pool.length
+        ? pool.map((card) => renderPlayerCard(card, "draft")).join("")
+        : `<div class="empty">No cards for this draw.</div>`;
+
+      $("playerGrid").querySelectorAll(".player-card").forEach((button) => {
+        button.onclick = () => pickCard(button.dataset.id);
+      });
+    }
+
+    function renderPlayerCard(card, context) {
+      const taken = isTaken(card);
+      const pending = state.pendingCardId === card.id;
+      const noSlotLeft = playableSlotsFor(card).length === 0 && !taken;
+      const disabled = context === "draft" && (taken || noSlotLeft);
+      const reason = context === "draft" ? reasonFor(card, taken, noSlotLeft) : `${card.nation}, ${card.decade}`;
+      const roleClass = card.type === "Bowler" ? "bowl" : card.type === "All-rounder" ? "all" : card.type === "Keeper" ? "keep" : "bat";
+      const positions = card.positions.map((pos) => `<span class="pos ${playableSlotsFor(card).includes(pos) && context === "draft" ? "hot" : ""}">${pos}</span>`).join("");
+      const showNumbers = visibleStats();
+      const statBlock = showNumbers
+        ? `<div class="stat-row">
+            ${statBox("Skill", card.batSkill)}
+            ${statBox("Power", card.batPower)}
+            ${statBox("Bowl", card.bowlSkill)}
+            ${statBox("Var", card.bowlVariation)}
+          </div>`
+        : `<div class="hidden-stat">Stats hidden in Hard mode</div>`;
+      return `<button class="player-card ${disabled ? "disabled" : ""} ${taken ? "chosen" : ""} ${pending ? "pending" : ""}" data-id="${card.id}" ${disabled && context === "draft" ? "disabled" : ""}>
+        <div class="card-main">
+          <div class="card-head">
+            <div>
+              <div class="player-name">${card.baseName}</div>
+              <div class="small">${card.nation} / ${card.decade}</div>
+            </div>
+            <span class="rating">${showNumbers ? cardOverall(card) : "?"}</span>
+          </div>
+          <div class="reason">${reason}</div>
+        </div>
+        <div class="card-roles">
+          <div class="badges">
+            <span class="badge ${roleClass}">${card.type}</span>
+            <span class="badge">${card.batRole}</span>
+            ${card.keeper ? `<span class="badge keep">WK</span>` : ""}
+          </div>
+          <div class="positions">${positions}</div>
+        </div>
+        <div class="card-stats">${statBlock}</div>
+      </button>`;
+    }
+
+    function statBox(label, value) {
+      return `<span class="stat"><strong>${value}</strong><span class="stat-label">${label}</span></span>`;
+    }
+
+    function reasonFor(card, taken, noSlotLeft) {
+      if (taken) return "Already selected in another era";
+      if (noSlotLeft) return hasWicketkeeper() ? "No eligible batting position left" : "Keeper path would be blocked";
+      return `Open: ${playableSlotsFor(card).join(", ")}`;
+    }
+
+    function renderPositionChoice() {
+      const box = $("positionChoice");
+      const card = state.pendingCardId ? cardById(state.pendingCardId) : null;
+      if (!card) {
+        box.className = "position-choice";
+        box.innerHTML = "";
+        return;
+      }
+      const slots = playableSlotsFor(card);
+      if (!slots.length) {
+        state.pendingCardId = null;
+        box.className = "position-choice";
+        box.innerHTML = "";
+        return;
+      }
+      box.className = "position-choice active";
+      box.innerHTML = `<div>
+        <strong>${card.baseName}</strong>
+        <div class="small">Choose batting position</div>
+      </div>
+      <div class="position-buttons">
+        ${slots.map((slot) => `<button data-place-slot="${slot}">No. ${slot}</button>`).join("")}
+      </div>`;
+      box.querySelectorAll("[data-place-slot]").forEach((button) => {
+        button.onclick = () => placeCardAt(card, Number(button.dataset.placeSlot));
+      });
+    }
+
+    function preservesKeeperPath(card, slot) {
+      if (hasWicketkeeper() || card.keeper) return true;
+      const remainingSlots = state.xi
+        .map((id, index) => id ? null : index + 1)
+        .filter((position) => position && position !== slot);
+      if (!remainingSlots.length) return false;
+      return DB.some((candidate) =>
+        candidate.keeper &&
+        candidate.baseName !== card.baseName &&
+        !isTaken(candidate) &&
+        candidate.positions.some((position) => remainingSlots.includes(position))
+      );
+    }
+
+    function pickCard(id) {
+      const card = cardById(id);
+      if (!card || !state.draw) return;
+      if (isTaken(card)) return setStatus(`${card.baseName} is already selected from another era.`, "error");
+      const slots = playableSlotsFor(card);
+      if (!slots.length) return setStatus(`${card.baseName} has no eligible batting position left.`, "error");
+      if (slots.length > 1) {
+        state.pendingCardId = card.id;
+        setStatus(`${card.baseName} can bat in multiple open positions. Choose where to play them.`);
+        render();
+        setTimeout(() => $("positionChoice").scrollIntoView({ block: "nearest", behavior: "smooth" }), 0);
+        return;
+      }
+      placeCardAt(card, slots[0]);
+    }
+
+    function placeCardAt(card, slot) {
+      if (!playableSlotsFor(card).includes(slot) || state.xi[slot - 1]) {
+        setStatus(`${card.baseName} cannot be placed at No. ${slot}.`, "error");
+        return;
+      }
+      state.xi[slot - 1] = card.id;
+      const filled = selectedCards().length;
+      state.draw = null;
+      state.pendingCardId = null;
+      stopSimulation(false);
+      state.match = null;
+      setStatus(`${card.baseName} added at No. ${slot}.`);
+      if (filled === 11) {
+        setStatus("XI complete. Use the Start Simulation button at the bottom.");
+      }
+      render();
+    }
+
+    function removeSlot(slot) {
+      const card = cardById(state.xi[slot - 1]);
+      state.xi[slot - 1] = null;
+      state.draw = null;
+      state.pendingCardId = null;
+      stopSimulation(false);
+      state.match = null;
+      setStatus(`${card.baseName} removed from No. ${slot}. Draw again to fill the XI.`);
+      render();
+    }
+
+    function drawTurn(consumesSkip = false) {
+      if (!nextEmptySlot()) {
+        setStatus("XI is already complete.", "warn");
+        return;
+      }
+      if (consumesSkip) {
+        if (!state.draw) return;
+        if (state.skipsLeft <= 0) return setStatus("No skips left.", "error");
+        state.skipsLeft--;
+      }
+      state.pendingCardId = null;
+      const pair = randomValidPair();
+      if (!pair) {
+        setStatus("No eligible cards remain for the open positions. Reset or remove a player.", "error");
+        return;
+      }
+      state.draw = pair;
+      setStatus(`${pair.nation}, ${pair.decade}. Choose any card that fits an open batting position.`);
+      render();
+    }
+
+    async function spinDraw(consumesSkip = false) {
+      if (state.spinning) return;
+      if (!nextEmptySlot()) {
+        setStatus("XI is already complete.", "warn");
+        return;
+      }
+      if (consumesSkip) {
+        if (!state.draw) return;
+        if (state.skipsLeft <= 0) return setStatus("No skips left.", "error");
+      }
+      const pair = randomValidPair();
+      if (!pair) {
+        setStatus("No eligible cards remain for the open positions. Reset or remove a player.", "error");
+        return;
+      }
+      if (consumesSkip) state.skipsLeft--;
+      state.spinning = true;
+      state.pendingCardId = null;
+      state.draw = null;
+      setStatus("Spinning country and decade...");
+      render();
+
+      const nationTarget = $("nationReel").querySelector("strong");
+      const decadeTarget = $("decadeReel").querySelector("strong");
+      let ticks = 0;
+      const timer = setInterval(() => {
+        ticks++;
+        nationTarget.textContent = NATIONS[Math.floor(Math.random() * NATIONS.length)];
+        decadeTarget.textContent = DECADES[Math.floor(Math.random() * DECADES.length)];
+        if (ticks >= 16) {
+          clearInterval(timer);
+          state.spinning = false;
+          state.draw = pair;
+          setStatus(`${pair.nation}, ${pair.decade}. Choose any card that fits an open batting position.`);
+          render();
+        }
+      }, 70);
+    }
+
+    function randomValidPair() {
+      const pairs = [];
+      NATIONS.forEach((nation) => {
+        DECADES.forEach((decade) => {
+          const eligible = DB.some((card) => card.nation === nation && card.decade === decade && !isTaken(card) && playableSlotsFor(card).length > 0);
+          if (eligible) pairs.push({ nation, decade });
+        });
+      });
+      if (!pairs.length) return null;
+      return pairs[Math.floor(Math.random() * pairs.length)];
+    }
+
+    function nextEmptySlot() {
+      const index = state.xi.findIndex((id) => !id);
+      return index >= 0 ? index + 1 : null;
+    }
+
+    function resetGame(keepMode = true) {
+      state.xi = Array(11).fill(null);
+      state.draw = null;
+      state.pendingCardId = null;
+      stopSimulation(false);
+      state.match = null;
+      state.skipsLeft = MODES[state.mode].skips;
+      setStatus(`New ${MODES[state.mode].label} draft started.`);
+      render();
+    }
+
+    function autoDraft() {
+      state.xi = Array(11).fill(null);
+      const keeperCandidates = DB.filter((card) => card.keeper).sort((a, b) => cardOverall(b) - cardOverall(a));
+      const keeper = weightedPick(keeperCandidates.slice(0, 18));
+      if (keeper) {
+        const keeperSlot = keeper.positions.find((slot) => slot >= 1 && slot <= 7) || keeper.positions[0];
+        state.xi[keeperSlot - 1] = keeper.id;
+      }
+      const slots = Array.from({ length: 11 }, (_, index) => index + 1);
+      slots.forEach((slot) => {
+        if (state.xi[slot - 1]) return;
+        const candidates = DB.filter((card) => card.positions.includes(slot) && !isTaken(card) && playableSlotsFor(card).includes(slot));
+        candidates.sort((a, b) => draftValue(b, slot) - draftValue(a, slot));
+        const top = candidates.slice(0, Math.min(10, candidates.length));
+        const pick = weightedPick(top);
+        if (pick) state.xi[slot - 1] = pick.id;
+      });
+      state.draw = null;
+      state.pendingCardId = null;
+      stopSimulation(false);
+      state.match = null;
+      setStatus("Auto draft completed. Use Start Simulation when ready.");
+      render();
+    }
+
+    function weightedPick(candidates) {
+      const weights = candidates.map((card, index) => Math.max(1, 12 - index));
+      const total = weights.reduce((sum, value) => sum + value, 0);
+      let roll = Math.random() * total;
+      for (let i = 0; i < candidates.length; i++) {
+        roll -= weights[i];
+        if (roll <= 0) return candidates[i];
+      }
+      return candidates[0];
+    }
+
+    function draftValue(card, slot) {
+      const topOrderBoost = slot <= 4 ? card.batSkill * .45 + card.batPower * .35 : 0;
+      const lowerBoost = slot >= 7 ? card.bowlSkill * .62 + card.bowlVariation * .32 : 0;
+      const finishBoost = slot >= 5 && slot <= 7 ? card.batPower * .48 + card.bowlSkill * .28 : 0;
+      const wk = card.keeper && !selectedCards().some((item) => item.keeper) ? 7 : 0;
+      return cardOverall(card) + topOrderBoost + lowerBoost + finishBoost + wk + Math.random() * 8;
+    }
+
+    function cardOverall(card) {
+      return Math.round(card.batSkill * .38 + card.batPower * .24 + card.bowlSkill * .24 + card.bowlVariation * .14);
+    }
+
+    function roleForSlot(slot) {
+      if (slot <= 2) return "Opener";
+      if (slot <= 4) return "Top order";
+      if (slot <= 6) return "Middle/finish";
+      if (slot <= 8) return "All-rounder";
+      return "Bowler";
+    }
+
+    function teamBalance() {
+      const xi = selectedCards();
+      if (!xi.length) return { batting: 0, bowling: 0, balance: 0, bowlers: 0, keeper: false, attack: "None" };
+      const batting = xi.reduce((sum, card, index) => sum + battingValue(card, index + 1), 0) / xi.length;
+      const bowlingOptions = xi.filter((card) => card.bowlSkill >= 65);
+      const topBowlers = [...bowlingOptions].sort((a, b) => bowlingValue(b) - bowlingValue(a)).slice(0, 6);
+      const bowling = topBowlers.length ? topBowlers.reduce((sum, card) => sum + bowlingValue(card), 0) / topBowlers.length : 0;
+      const hasKeeper = xi.some((card) => card.keeper);
+      const phaseCoverage = ["new", "middle", "death"].filter((type) => bowlingOptions.some((card) => card.bowlType === type)).length;
+      const bowlerCountScore = Math.min(100, bowlingOptions.length * 18);
+      const keeperScore = hasKeeper ? 100 : 42;
+      const balance = batting * .42 + bowling * .32 + bowlerCountScore * .12 + keeperScore * .08 + phaseCoverage / 3 * 100 * .06;
+      const attack = `${bowlingOptions.length} options, ${phaseCoverage}/3 phases`;
+      return {
+        batting: Math.round(batting),
+        bowling: Math.round(bowling),
+        balance: Math.round(balance),
+        bowlers: bowlingOptions.length,
+        keeper: hasKeeper,
+        attack
+      };
+    }
+
+    function battingValue(card, slot) {
+      const phaseFit = slot <= 2 && card.archetype === "aggressor" ? 5 :
+        slot <= 4 && card.archetype === "anchor" ? 4 :
+        slot >= 5 && slot <= 7 && card.archetype === "finisher" ? 6 :
+        slot >= 8 && card.bowlSkill >= 70 ? 2 : 0;
+      return Math.min(100, card.batSkill * .68 + card.batPower * .32 + phaseFit);
+    }
+
+    function bowlingValue(card) {
+      return Math.min(100, card.bowlSkill * .7 + card.bowlVariation * .3);
+    }
+
+    function ensureMatch() {
+      if (state.match) return true;
+      if (selectedCards().length < 11) {
+        setStatus("Complete the XI before scoring.", "error");
+        goToView("draft");
+        return false;
+      }
+      if (!hasWicketkeeper()) {
+        setStatus("A wicketkeeper is mandatory before simulation.", "error");
+        goToView("draft");
+        return false;
+      }
+      state.match = createMatch();
+      return true;
+    }
+
+    function createMatch() {
+      const xi = state.xi.map(cardById);
+      return {
+        xi,
+        runs: 0,
+        wickets: 0,
+        legal: 0,
+        striker: 0,
+        nonStriker: 1,
+        next: 2,
+        complete: false,
+        commentary: [],
+        balls: [],
+        bat: xi.map((card) => ({ card, r: 0, b: 0, fours: 0, sixes: 0, out: false, how: "not out" })),
+        milestones: new Set()
+      };
+    }
+
+    function playBalls(count, highlightsOnly = false) {
+      if (!ensureMatch()) return;
+      let highlights = 0;
+      for (let i = 0; i < count && !state.match.complete; i++) {
+        const item = playBall(state.match);
+        if (item.major) highlights++;
+        if (highlightsOnly && highlights > 0) break;
+      }
+      render();
+    }
+
+    function playToHighlight() {
+      if (!ensureMatch()) return;
+      let guard = 0;
+      while (!state.match.complete && guard < 120) {
+        const item = playBall(state.match);
+        guard++;
+        if (item.major) break;
+      }
+      render();
+    }
+
+    function playToEnd() {
+      if (!ensureMatch()) return;
+      stopSimulation(false);
+      while (!state.match.complete) playBall(state.match);
+      render();
+    }
+
+    function startFullSimulation(restart = false) {
+      if (restart) {
+        if (selectedCards().length < 11) return;
+        state.match = createMatch();
+      } else if (!ensureMatch()) {
+        return;
+      } else if (state.match.complete) {
+        state.match = createMatch();
+      }
+      stopSimulation(false);
+      state.simRunning = true;
+      render();
+      simulationTimer = setInterval(() => {
+        if (!state.match || state.match.complete) {
+          stopSimulation();
+          return;
+        }
+        playBall(state.match);
+        if (state.match.complete) stopSimulation(false);
+        render();
+      }, simulationDelay());
+    }
+
+    function stopSimulation(shouldRender = true) {
+      if (simulationTimer) {
+        clearInterval(simulationTimer);
+        simulationTimer = null;
+      }
+      state.simRunning = false;
+      if (shouldRender) render();
+    }
+
+    function setSimulationSpeed(speed) {
+      state.simSpeed = speed;
+      if (state.simRunning) {
+        startFullSimulation(false);
+      } else {
+        renderSimulator();
+      }
+    }
+
+    function simulationDelay() {
+      return Math.round(520 / state.simSpeed);
+    }
+
+    function playBall(match) {
+      if (match.complete) return { major: false };
+      const striker = match.xi[match.striker];
+      const batterIndex = match.striker;
+      const stat = match.bat[match.striker];
+      const over = Math.floor(match.legal / 6);
+      const ballInOver = match.legal % 6;
+      const ph = phase(match.legal);
+      const runsBefore = match.runs;
+      const balance = teamBalance();
+      const batterScore = battingValue(striker, match.striker + 1);
+      const pressure = match.wickets * 2.2 + (ph === "death" ? -5 : ph === "powerplay" ? -2 : 0);
+      const intent = intentFor(striker, ph, match.wickets);
+      const difficulty = MODES[state.mode];
+      const balanceBoost = (balance.balance - 78) * .11;
+      const quality = batterScore + striker.batPower * .18 + intent * 24 + balanceBoost - pressure - difficulty.qualityPenalty + randomNormal() * 10;
+      const wicketChance = clamp((.035 + (100 - striker.batSkill) / 1000 + intent * .028 + match.wickets * .003 - balance.balance / 4200) * difficulty.wicketMultiplier, .018, .22);
+      let outcome;
+      if (Math.random() < wicketChance) {
+        outcome = "W";
+      } else {
+        outcome = runOutcome(quality, ph, difficulty);
+      }
+
+      const label = `${over}.${ballInOver + 1}`;
+      let text = "";
+      let major = false;
+      let eventClass = "";
+
+      match.legal++;
+
+      if (outcome === "W") {
+        match.wickets++;
+        stat.b++;
+        stat.out = true;
+        stat.how = "out";
+        major = true;
+        eventClass = "wicket";
+        text = `${label}: ${striker.baseName} is out. ${match.runs}/${match.wickets}.`;
+        if (match.next < 11) match.striker = match.next++;
+      } else {
+        match.runs += outcome;
+        stat.r += outcome;
+        stat.b++;
+        if (outcome === 4) stat.fours++;
+        if (outcome === 6) stat.sixes++;
+        eventClass = outcome >= 4 ? "boundary" : "";
+        text = ballText(label, striker, outcome, ph);
+        if (outcome % 2 === 1) swapStrike(match);
+        const fifty = Math.floor(stat.r / 50) * 50;
+        if (fifty >= 50 && !match.milestones.has(`${striker.id}-${fifty}`)) {
+          match.milestones.add(`${striker.id}-${fifty}`);
+          major = true;
+          text = `${label}: ${fifty} for ${striker.baseName} from ${stat.b} balls.`;
+        }
+      }
+
+      if (match.legal === 36 && !match.milestones.has("powerplay")) {
+        match.milestones.add("powerplay");
+        major = true;
+        text = `End of powerplay: ${match.runs}/${match.wickets}.`;
+      }
+      if (match.legal % 6 === 0) {
+        swapStrike(match);
+        if (match.legal >= 96) major = major || outcome >= 4;
+      }
+      if (match.runs >= 300 && !match.milestones.has("300")) {
+        match.milestones.add("300");
+        major = true;
+        text = `${label}: 300 reached. This XI has cleared the target.`;
+      }
+      if (match.legal >= 120 || match.wickets >= 10) {
+        match.complete = true;
+        major = true;
+        text = `Innings complete: ${match.runs}/${match.wickets} in ${overs(match.legal)}.`;
+      }
+
+      match.balls.push({
+        label,
+        phase: ph,
+        batterIndex,
+        batterName: striker.baseName,
+        runs: outcome === "W" ? 0 : outcome,
+        wicket: outcome === "W",
+        four: outcome === 4,
+        six: outcome === 6,
+        boundary: outcome === 4 || outcome === 6,
+        dot: outcome === "W" || outcome === 0,
+        runsBefore,
+        scoreAfter: match.runs,
+        wicketsAfter: match.wickets
+      });
+      match.commentary.unshift({ label, text, event: String(outcome), eventClass, major });
+      return { major };
+    }
+
+    function runOutcome(quality, ph, difficulty = MODES[state.mode]) {
+      const phaseBoost = ph === "death" ? 10 : ph === "powerplay" ? 5 : 0;
+      const q = quality + phaseBoost - difficulty.boundaryPenalty;
+      const r = Math.random();
+      if (q > 126 && r < .26) return 6;
+      if (q > 112 && r < .36) return 4;
+      if (q > 96 && r < .18) return 6;
+      if (q > 88 && r < .34) return 4;
+      if (q < 62 && r < .38) return 0;
+      if (r < .11) return 0;
+      if (r < .63) return 1;
+      if (r < .84) return 2;
+      if (r < .91) return 3;
+      return q > 86 ? 4 : 1;
+    }
+
+    function intentFor(card, ph, wickets) {
+      let intent = .5;
+      if (card.archetype === "aggressor") intent += ph === "powerplay" ? .2 : .08;
+      if (card.archetype === "finisher") intent += ph === "death" ? .25 : .04;
+      if (card.archetype === "anchor") intent -= wickets >= 3 ? .14 : .04;
+      if (card.archetype === "steady") intent -= .02;
+      if (ph === "death") intent += .16;
+      if (wickets >= 7) intent -= .12;
+      return clamp(intent, .22, .9);
+    }
+
+    function ballText(label, striker, runs, ph) {
+      if (runs === 0) return `${label}: ${striker.baseName} cannot beat the ring. Dot ball.`;
+      if (runs === 1) return `${label}: ${striker.baseName} works a single.`;
+      if (runs === 2) return `${label}: ${striker.baseName} comes back for two.`;
+      if (runs === 3) return `${label}: ${striker.baseName} drives into the deep gap for three.`;
+      if (runs === 4) return `${label}: ${striker.baseName} finds the rope. Four.`;
+      if (runs === 6) return `${label}: ${striker.baseName} clears the boundary. Six.`;
+      return `${label}: ${runs} runs.`;
+    }
+
+    function renderSimulator() {
+      const match = state.match;
+      if (!match) {
+        $("inningsState").textContent = selectedCards().length === 11 ? "Ready to score" : "Draft incomplete";
+        $("scoreText").textContent = "0/0";
+        $("scoreMeta").textContent = "Overs 0.0, required target 300+";
+        $("inningsBar").style.width = "0%";
+        $("legalBalls").textContent = "0 balls";
+        $("commentary").innerHTML = `<div class="empty">No innings started.</div>`;
+        $("resultBox").textContent = selectedCards().length === 11 ? "Choose a speed and run the full innings." : "Complete an XI to score the innings.";
+        $("resultBox").className = "result";
+        $("analysisBox").innerHTML = "";
+      } else {
+        $("inningsState").textContent = match.complete ? "Innings complete" : state.simRunning ? `Running at ${state.simSpeed}x` : `${phase(match.legal)}: ${match.xi[match.striker]?.baseName || "All out"} on strike`;
+        $("scoreText").textContent = `${match.runs}/${match.wickets}`;
+        $("scoreMeta").textContent = `Overs ${overs(match.legal)}, run rate ${runRate(match).toFixed(2)}`;
+        $("inningsBar").style.width = `${Math.min(100, match.legal / 120 * 100)}%`;
+        $("legalBalls").textContent = `${match.legal} legal balls`;
+        $("commentary").innerHTML = match.commentary.length ? match.commentary.map((item) => `<div class="ball">
+          <strong>${item.label}</strong><span>${item.text}</span><span class="event ${item.eventClass}">${item.event}</span>
+        </div>`).join("") : `<div class="empty">No balls bowled.</div>`;
+        const won = match.complete && match.runs >= 300;
+        const complete = match.complete;
+        $("resultBox").textContent = complete ? resultText(match) : `Projected score: ${Math.round(runRate(match) * 20)}`;
+        $("resultBox").className = `result ${complete ? (won ? "win" : "loss") : ""}`;
+        $("analysisBox").innerHTML = complete ? renderMatchAnalysis(match) : "";
+      }
+
+      const canSimulate = teamCanSimulate();
+      $("runSimBtn").disabled = !canSimulate || state.simRunning;
+      $("restartSimBtn").disabled = !canSimulate;
+      $("skipEndBtn").disabled = !canSimulate || !state.match || state.match.complete;
+      $("runSimBtn").textContent = state.simRunning ? "Running..." : state.match?.complete ? "Run Again" : "Run Simulation";
+      document.querySelectorAll("[data-speed]").forEach((button) => {
+        button.classList.toggle("active", Number(button.dataset.speed) === state.simSpeed);
+      });
+      renderTables();
+    }
+
+    function renderTables() {
+      const match = state.match;
+      if (!match) {
+        $("batTable").innerHTML = `<tr><th>Batter</th><th class="num">R</th><th class="num">B</th><th class="num">4s</th><th class="num">6s</th></tr>`;
+      } else {
+        $("batTable").innerHTML = `<tr><th>Batter</th><th>How</th><th class="num">R</th><th class="num">B</th><th class="num">4s</th><th class="num">6s</th></tr>` +
+          match.bat.map((row) => `<tr><td>${row.card.baseName}</td><td>${row.how}</td><td class="num">${row.r}</td><td class="num">${row.b}</td><td class="num">${row.fours}</td><td class="num">${row.sixes}</td></tr>`).join("");
+      }
+      const score = teamBalance();
+      const hidden = !visibleStats();
+      $("balanceTable").innerHTML = `<tr><th>Item</th><th>Value</th></tr>
+        <tr><td>Batting rating</td><td>${hidden ? "Hidden" : score.batting}</td></tr>
+        <tr><td>Bowling rating</td><td>${hidden ? "Hidden" : score.bowling}</td></tr>
+        <tr><td>Balance rating</td><td>${hidden ? "Hidden" : score.balance}</td></tr>
+        <tr><td>Bowling attack</td><td>${hidden ? "Hidden" : score.attack}</td></tr>
+        <tr><td>Wicketkeeper</td><td>${score.keeper ? "Yes" : "No"}</td></tr>`;
+    }
+
+    function resultText(match) {
+      const top = [...match.bat].sort((a, b) => b.r - a.r)[0];
+      const prefix = match.runs >= 300 ? "Target cleared." : "Target missed.";
+      return `${prefix} ${match.runs}/${match.wickets} in ${overs(match.legal)}. Top score: ${top.card.baseName} ${top.r}.`;
+    }
+
+    function renderMatchAnalysis(match) {
+      const feedback = matchFeedback(match);
+      return `<div class="feedback">
+        <div class="feedback-card"><strong>What went right</strong>${feedbackList(feedback.right)}</div>
+        <div class="feedback-card"><strong>What could improve</strong>${feedbackList(feedback.improve)}</div>
+        <div class="feedback-card wide"><strong>Selection read</strong>${feedbackList(feedback.selection)}</div>
+      </div>`;
+    }
+
+    function feedbackList(items) {
+      return `<ul>${items.map((item) => `<li>${item}</li>`).join("")}</ul>`;
+    }
+
+    function matchFeedback(match) {
+      const rows = scoreRows(match);
+      const top = [...rows].sort((a, b) => b.r - a.r)[0];
+      const second = [...rows].sort((a, b) => b.r - a.r)[1];
+      const phases = phaseBreakdown(match);
+      const activePhases = phases.filter((item) => item.balls > 0);
+      const bestPhase = [...activePhases].sort((a, b) => phaseRunRate(b) - phaseRunRate(a))[0];
+      const weakPhase = [...activePhases].sort((a, b) => phaseRunRate(a) - phaseRunRate(b))[0];
+      const boundaries = rows.reduce((sum, row) => sum + row.boundaries, 0);
+      const sixes = rows.reduce((sum, row) => sum + row.sixes, 0);
+      const boundaryLeaders = rows.filter((row) => row.boundaries > 0).sort((a, b) => b.boundaries - a.boundaries || b.r - a.r).slice(0, 2);
+      const topOrder = groupProfile(match.xi, 1, 3);
+      const engineRoom = groupProfile(match.xi, 4, 7);
+      const finishers = groupProfile(match.xi, 5, 7);
+      const lowerOrder = groupProfile(match.xi, 8, 11);
+      const slotRatings = match.xi.map((card, index) => ({
+        card,
+        slot: index + 1,
+        batFit: Math.round(battingValue(card, index + 1)),
+        bowlFit: Math.round(bowlingValue(card))
+      }));
+      const bestFit = [...slotRatings].sort((a, b) => b.batFit - a.batFit)[0];
+      const weakestTopSeven = [...slotRatings].filter((item) => item.slot <= 7).sort((a, b) => a.batFit - b.batFit)[0];
+      const keeperSlot = slotRatings.find((item) => item.card.keeper);
+      const bowlingOptions = match.xi.filter((card) => card.bowlSkill >= 65);
+      const topBowlers = [...bowlingOptions].sort((a, b) => bowlingValue(b) - bowlingValue(a)).slice(0, 3);
+      const missingPhases = ["new", "middle", "death"].filter((type) => !bowlingOptions.some((card) => card.bowlType === type));
+      const quietTopOrder = rows.filter((row) => row.slot <= 3 && row.b >= 6).sort((a, b) => strikeRate(a) - strikeRate(b))[0];
+      const wicketsEnteringDeath = (match.balls || []).slice(0, 96).filter((ball) => ball.wicket).length;
+      const score = teamBalance();
+      const right = [];
+      const improve = [];
+      const selection = [];
+
+      if (match.runs >= 300) {
+        right.push(`The XI cleared the target with ${match.runs}/${match.wickets} because its batting rating was ${score.batting} and balance rating was ${score.balance}.`);
+      } else {
+        right.push(`The innings still reached ${match.runs}, with a batting rating of ${score.batting} and balance rating of ${score.balance}.`);
+      }
+      right.push(`${top.card.baseName} at No. ${top.slot} made ${top.r} off ${top.b} at a ${strikeRateText(top)} strike rate; his card was ${top.card.batSkill} skill/${top.card.batPower} power, so the main scoring came from a genuine high-ceiling pick.`);
+      if (second) {
+        right.push(`${second.card.baseName} gave the next-best return with ${second.r} off ${second.b}; together the top two scorers made ${top.r + second.r}, or ${Math.round((top.r + second.r) / Math.max(1, match.runs) * 100)}% of the innings.`);
+      }
+      if (bestPhase) {
+        const leader = phaseLeader(match, bestPhase.key);
+        right.push(`${bestPhase.label} was the strongest phase: ${bestPhase.runs}/${bestPhase.wickets} at ${phaseRunRate(bestPhase).toFixed(1)} runs per over${leader ? `, led by ${leader.card.baseName} with ${leader.runs}` : ""}.`);
+      }
+      if (boundaries > 0) {
+        right.push(`${boundaries} boundaries, including ${sixes} sixes, drove the acceleration${boundaryLeaders.length ? `; ${boundaryLeaders.map((row) => `${row.card.baseName} hit ${row.boundaries}`).join(" and ")}` : ""}.`);
+      }
+      if (match.wickets <= 6) right.push(`Only ${match.wickets} wickets fell, so the innings kept enough resources for high-intent batting late.`);
+      if (score.bowlers >= 5 && score.bowling >= 72) right.push(`The XI stayed balanced with ${score.bowlers} bowling options and a bowling rating of ${score.bowling}, which protects the team-balance score in this game.`);
+
+      if (match.runs < 300) {
+        const deficit = 300 - match.runs;
+        improve.push(`The side finished ${deficit} short; that is ${Math.ceil(deficit / 20)} extra runs per over across the innings, or one additional boundary roughly every ${Math.max(1, Math.round(120 / Math.ceil(deficit / 4)))} balls.`);
+      }
+      if (weakPhase) {
+        improve.push(`${weakPhase.label} was the weakest phase at ${weakPhase.runs}/${weakPhase.wickets} and ${phaseRunRate(weakPhase).toFixed(1)} runs per over; upgrade the players who bat in that phase before changing the whole XI.`);
+      }
+      if (topOrder.power < 86 || (weakPhase && weakPhase.key === "powerplay")) {
+        improve.push(`The top three averaged ${topOrder.power} batting power. For a 300 chase, openers need extreme boundary output; the lowest-power top-order card was ${topOrder.lowestPower.card.baseName} at ${topOrder.lowestPower.card.batPower}.`);
+      }
+      if (finishers.power < 86) {
+        improve.push(`Nos. 5-7 averaged ${finishers.power} batting power. The death overs usually need finishers closer to 90 power, so this group is an upgrade point.`);
+      } else if (weakPhase && weakPhase.key === "death overs") {
+        improve.push(`Death hitting was not a raw power problem: Nos. 5-7 averaged ${finishers.power} power, but the innings entered over 16 with ${wicketsEnteringDeath} wickets down and made only ${weakPhase.runs} in the death.`);
+      }
+      if (quietTopOrder && quietTopOrder.r < 24) {
+        improve.push(`${quietTopOrder.card.baseName} used ${quietTopOrder.b} balls for ${quietTopOrder.r}; with a No. ${quietTopOrder.slot} role, that slows the powerplay unless the other opener is explosive.`);
+      }
+      if (match.wickets >= 8) improve.push(`${match.wickets} wickets fell. Add one safer high-skill batter, because the wicket model punishes low batting skill and high intent together.`);
+      if (score.bowlers < 5) improve.push(`Only ${score.bowlers} realistic bowling options were selected. Add at least five, because the balance score affects scoring even in a batting challenge.`);
+      if (missingPhases.length) improve.push(`The bowling mix is missing ${missingPhases.join(" and ")} coverage, so an all-rounder with that phase type would improve balance without sacrificing a batting slot.`);
+      if (!improve.length) improve.push(`The XI is close. The clearest upgrade is the weakest top-seven batting fit: No. ${weakestTopSeven.slot} ${weakestTopSeven.card.baseName}, rated ${weakestTopSeven.batFit} for that slot.`);
+
+      selection.push(`Best batting fit: No. ${bestFit.slot} ${bestFit.card.baseName} (${bestFit.card.decade}, ${bestFit.card.nation}) rated ${bestFit.batFit} in that role from ${bestFit.card.batSkill} skill and ${bestFit.card.batPower} power.`);
+      selection.push(`Weakest top-seven fit: No. ${weakestTopSeven.slot} ${weakestTopSeven.card.baseName} rated ${weakestTopSeven.batFit}; this is the first slot to upgrade if a stronger eligible card appears.`);
+      selection.push(`Top order profile: ${topOrder.skill} skill/${topOrder.power} power. Engine room profile, Nos. 4-7: ${engineRoom.skill} skill/${engineRoom.power} power. Lower order bowling value: ${lowerOrder.bowling}.`);
+      if (keeperSlot) selection.push(`Keeper requirement was covered by ${keeperSlot.card.baseName} at No. ${keeperSlot.slot}, with a ${keeperSlot.batFit} batting fit for that position.`);
+      selection.push(`Bowling core: ${topBowlers.length ? topBowlers.map((card) => `${card.baseName} (${card.bowlType}, ${Math.round(bowlingValue(card))})`).join(", ") : "no strong bowling options"}. Overall attack: ${score.attack}.`);
+
+      return {
+        right: right.slice(0, 5),
+        improve: improve.slice(0, 5),
+        selection: selection.slice(0, 5)
+      };
+    }
+
+    function scoreRows(match) {
+      return match.bat.map((row, index) => ({
+        ...row,
+        slot: index + 1,
+        boundaries: row.fours + row.sixes
+      }));
+    }
+
+    function phaseBreakdown(match) {
+      const phases = [
+        { key: "powerplay", label: "Powerplay", runs: 0, wickets: 0, balls: 0, dots: 0, boundaries: 0 },
+        { key: "middle overs", label: "Middle overs", runs: 0, wickets: 0, balls: 0, dots: 0, boundaries: 0 },
+        { key: "death overs", label: "Death overs", runs: 0, wickets: 0, balls: 0, dots: 0, boundaries: 0 }
+      ];
+      const lookup = Object.fromEntries(phases.map((item) => [item.key, item]));
+      (match.balls || []).forEach((ball) => {
+        const item = lookup[ball.phase];
+        if (!item) return;
+        item.runs += ball.runs;
+        item.wickets += ball.wicket ? 1 : 0;
+        item.balls++;
+        item.dots += ball.dot ? 1 : 0;
+        item.boundaries += ball.boundary ? 1 : 0;
+      });
+      return phases;
+    }
+
+    function phaseRunRate(item) {
+      return item.balls ? item.runs / item.balls * 6 : 0;
+    }
+
+    function phaseLeader(match, phaseKey) {
+      const totals = new Map();
+      (match.balls || []).filter((ball) => ball.phase === phaseKey).forEach((ball) => {
+        const row = totals.get(ball.batterIndex) || { card: match.xi[ball.batterIndex], runs: 0, balls: 0 };
+        row.runs += ball.runs;
+        row.balls++;
+        totals.set(ball.batterIndex, row);
+      });
+      return [...totals.values()].sort((a, b) => b.runs - a.runs || a.balls - b.balls)[0];
+    }
+
+    function groupProfile(xi, startSlot, endSlot) {
+      const cards = xi.slice(startSlot - 1, endSlot);
+      const withSlots = cards.map((card, index) => ({ card, slot: startSlot + index }));
+      const lowestPower = [...withSlots].sort((a, b) => a.card.batPower - b.card.batPower)[0];
+      return {
+        skill: Math.round(average(cards, (card) => card.batSkill)),
+        power: Math.round(average(cards, (card) => card.batPower)),
+        batting: Math.round(average(withSlots, (item) => battingValue(item.card, item.slot))),
+        bowling: Math.round(average(cards, bowlingValue)),
+        lowestPower
+      };
+    }
+
+    function average(items, picker) {
+      if (!items.length) return 0;
+      return items.reduce((sum, item) => sum + picker(item), 0) / items.length;
+    }
+
+    function strikeRate(row) {
+      return row.b ? row.r / row.b * 100 : 0;
+    }
+
+    function strikeRateText(row) {
+      return strikeRate(row).toFixed(0);
+    }
+
+    function renderDatabase() {
+      if (!$("dbNation").options.length) {
+        $("dbNation").innerHTML = `<option value="all">All nations</option>` + NATIONS.map((nation) => `<option value="${nation}">${nation}</option>`).join("");
+        $("dbDecade").innerHTML = `<option value="all">All decades</option>` + DECADES.map((decade) => `<option value="${decade}">${decade}</option>`).join("");
+      }
+      const query = state.dbSearch.toLowerCase();
+      const list = DB.filter((card) => {
+        const text = `${card.baseName} ${card.nation} ${card.decade} ${card.type} ${card.batRole}`.toLowerCase();
+        return (!query || text.includes(query)) &&
+          (state.dbNation === "all" || card.nation === state.dbNation) &&
+          (state.dbDecade === "all" || card.decade === state.dbDecade) &&
+          (state.dbRole === "all" || card.type === state.dbRole);
+      }).sort((a, b) => a.nation.localeCompare(b.nation) || a.decade.localeCompare(b.decade) || cardOverall(b) - cardOverall(a));
+      $("dbCount").textContent = `${list.length} era cards, ${DB.length} total`;
+      $("dbGrid").innerHTML = list.map((card) => renderPlayerCard(card, "database")).join("");
+    }
+
+    function phase(legal) {
+      const over = Math.floor(legal / 6);
+      if (over < 6) return "powerplay";
+      if (over < 16) return "middle overs";
+      return "death overs";
+    }
+
+    function overs(balls) {
+      return `${Math.floor(balls / 6)}.${balls % 6}`;
+    }
+
+    function runRate(match) {
+      return match.runs / Math.max(1, match.legal) * 6;
+    }
+
+    function swapStrike(match) {
+      const temp = match.striker;
+      match.striker = match.nonStriker;
+      match.nonStriker = temp;
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function randomNormal() {
+      let u = 0;
+      let v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+
+    $("drawBtn").onclick = () => spinDraw(false);
+    $("skipBtn").onclick = () => spinDraw(true);
+    $("autoBtn").onclick = autoDraft;
+    $("resetBtn").onclick = () => resetGame();
+    $("startDraftBtn").onclick = () => {
+      resetGame();
+      goToView("draft");
+    };
+    $("draftStartSimBtn").onclick = () => {
+      if (!teamCanSimulate()) {
+        setStatus(selectedCards().length < 11 ? "Complete the XI before starting simulation." : "A wicketkeeper is mandatory before simulation.", "error");
+        return;
+      }
+      state.match = null;
+      goToView("simulate");
+      startFullSimulation(true);
+    };
+    $("runSimBtn").onclick = () => startFullSimulation(state.match?.complete);
+    $("skipEndBtn").onclick = () => playToEnd();
+    $("restartSimBtn").onclick = () => {
+      resetGame();
+      goToView("draft");
+    };
+    document.querySelectorAll("[data-speed]").forEach((button) => {
+      button.onclick = () => setSimulationSpeed(Number(button.dataset.speed));
     });
+    $("dbSearch").oninput = (event) => { state.dbSearch = event.target.value; renderDatabase(); };
+    $("dbNation").onchange = (event) => { state.dbNation = event.target.value; renderDatabase(); };
+    $("dbDecade").onchange = (event) => { state.dbDecade = event.target.value; renderDatabase(); };
+    $("dbRole").onchange = (event) => { state.dbRole = event.target.value; renderDatabase(); };
+
+    render();
   </script>
 </body>
 </html>
