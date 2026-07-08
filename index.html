@@ -497,18 +497,6 @@
       font-size: 11px;
     }
 
-    .slot-remove {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      width: 25px;
-      min-height: 25px;
-      padding: 0;
-      display: none;
-    }
-
-    .slot.filled:hover .slot-remove { display: grid; place-items: center; }
-
     .player-panel {
       margin-top: 16px;
       display: grid;
@@ -1662,9 +1650,9 @@
       $("drawTitle").textContent = state.draw ? `${state.draw.nation}` : "No draw";
       $("drawSub").textContent = state.draw ? `${state.draw.decade}. Select one eligible card.` : "Draw a country and decade";
       $("skipBtn").textContent = `Skip Draw (${state.skipsLeft})`;
-      $("skipBtn").disabled = !state.draw || state.skipsLeft <= 0 || state.spinning;
-      $("drawBtn").disabled = state.spinning || selectedCards().length >= 11;
-      $("drawBtn").textContent = state.spinning ? "Spinning..." : "Spin Country + Decade";
+      $("skipBtn").disabled = !state.draw || Boolean(state.pendingCardId) || state.skipsLeft <= 0 || state.spinning;
+      $("drawBtn").disabled = state.spinning || Boolean(state.draw) || Boolean(state.pendingCardId) || selectedCards().length >= 11;
+      $("drawBtn").textContent = state.spinning ? "Spinning..." : (state.draw || state.pendingCardId ? "Choose Player to Continue" : "Spin Country + Decade");
       $("nationReel").classList.toggle("spinning", state.spinning);
       $("decadeReel").classList.toggle("spinning", state.spinning);
       if (!state.spinning) {
@@ -1687,7 +1675,7 @@
     function draftFooterMessage() {
       const remaining = 11 - selectedCards().length;
       if (remaining > 0) return `Select ${remaining} more player${remaining === 1 ? "" : "s"} to unlock simulation. A wicketkeeper is mandatory.`;
-      if (!hasWicketkeeper()) return "XI has 11 players but no wicketkeeper. Remove a player and draft a keeper.";
+      if (!hasWicketkeeper()) return "XI has 11 players but no wicketkeeper. Start a new draft and include a keeper.";
       return "Your XI is complete, including a wicketkeeper. Start the innings when ready.";
     }
 
@@ -1713,17 +1701,11 @@
           <span class="slot-num">No. ${slot}</span>
           <span class="slot-name">${card ? card.baseName : "Empty"}</span>
           <span class="slot-note">${note}</span>
-          ${card ? `<span class="slot-remove" data-remove="${slot}">x</span>` : ""}
         </button>`;
       }).join("");
 
       $("xiGrid").querySelectorAll(".slot").forEach((button) => {
-        button.onclick = (event) => {
-          const slot = Number(button.dataset.slot);
-          if (event.target.dataset.remove) {
-            removeSlot(slot);
-            return;
-          }
+        button.onclick = () => {
           setStatus("Pick from the current draw. If the card fits multiple open slots, choose the batting position.");
           render();
         };
@@ -1875,18 +1857,15 @@
       render();
     }
 
-    function removeSlot(slot) {
-      const card = cardById(state.xi[slot - 1]);
-      state.xi[slot - 1] = null;
-      state.draw = null;
-      state.pendingCardId = null;
-      stopSimulation(false);
-      state.match = null;
-      setStatus(`${card.baseName} removed from No. ${slot}. Draw again to fill the XI.`);
-      render();
-    }
-
     function drawTurn(consumesSkip = false) {
+      if (state.pendingCardId) {
+        setStatus("Choose a batting position for the selected player before changing the draw.", "warn");
+        return;
+      }
+      if (state.draw && !consumesSkip) {
+        setStatus("Choose a player from the current draw before spinning again.", "warn");
+        return;
+      }
       if (!nextEmptySlot()) {
         setStatus("XI is already complete.", "warn");
         return;
@@ -1899,7 +1878,7 @@
       state.pendingCardId = null;
       const pair = randomValidPair();
       if (!pair) {
-        setStatus("No eligible cards remain for the open positions. Reset or remove a player.", "error");
+        setStatus("No eligible cards remain for the open positions. Use Reset to start a new draft.", "error");
         return;
       }
       state.draw = pair;
@@ -1909,6 +1888,14 @@
 
     async function spinDraw(consumesSkip = false) {
       if (state.spinning) return;
+      if (state.pendingCardId) {
+        setStatus("Choose a batting position for the selected player before changing the draw.", "warn");
+        return;
+      }
+      if (state.draw && !consumesSkip) {
+        setStatus("Choose a player from the current draw before spinning again.", "warn");
+        return;
+      }
       if (!nextEmptySlot()) {
         setStatus("XI is already complete.", "warn");
         return;
@@ -1919,7 +1906,7 @@
       }
       const pair = randomValidPair();
       if (!pair) {
-        setStatus("No eligible cards remain for the open positions. Reset or remove a player.", "error");
+        setStatus("No eligible cards remain for the open positions. Use Reset to start a new draft.", "error");
         return;
       }
       if (consumesSkip) state.skipsLeft--;
