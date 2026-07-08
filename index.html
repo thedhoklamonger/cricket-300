@@ -43,16 +43,15 @@
     <p>Loading the draft simulator...</p>
   </main>
   <script>
-    const chunkCount = 8;
-    const paths = Array.from({ length: chunkCount }, (_, index) => `chunks/part-${String(index + 1).padStart(3, "0")}.txt`);
-
-    Promise.all(paths.map((path) => fetch(path).then((response) => {
-      if (!response.ok) throw new Error(`Could not load ${path}`);
+    fetch("app.gz.b64").then((response) => {
+      if (!response.ok) throw new Error("Could not load app payload");
+      if (!("DecompressionStream" in window)) throw new Error("This browser cannot decompress the simulator payload");
       return response.text();
-    }))).then((parts) => {
-      const binary = atob(parts.join("").replace(/\s+/g, ""));
+    }).then(async (payload) => {
+      const binary = atob(payload.replace(/\s+/g, ""));
       const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-      const html = new TextDecoder("utf-8").decode(bytes);
+      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+      const html = await new Response(stream).text();
       document.open();
       document.write(html);
       document.close();
