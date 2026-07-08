@@ -1,3 +1,5 @@
+---
+---
 <!doctype html>
 <html lang="en">
 <head>
@@ -43,11 +45,9 @@
     <p>Loading the draft simulator...</p>
   </main>
   <script>
-    fetch("app.txt", { cache: "no-store" }).then((response) => {
-      if (!response.ok) throw new Error("Could not load app payload");
+    (async () => {
       if (!("DecompressionStream" in window)) throw new Error("This browser cannot decompress the simulator payload");
-      return response.text();
-    }).then(async (payload) => {
+      const payload = `{% include_relative app.txt %}`;
       const binary = atob(payload.replace(/\s+/g, ""));
       const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
       const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
@@ -55,7 +55,7 @@
       document.open();
       document.write(html);
       document.close();
-    }).catch((error) => {
+    })().catch((error) => {
       document.querySelector("p").textContent = `The simulator could not be loaded: ${error.message}`;
     });
   </script>
