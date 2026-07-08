@@ -43,11 +43,14 @@
     <p>Loading the draft simulator...</p>
   </main>
   <script>
-    fetch("app.gz.b64").then((response) => {
+    const payloadBlobUrl = "https://api.github.com/repos/thedhoklamonger/cricket-300/git/blobs/065db8813ac9f890e334541d3711886ef971e217";
+
+    fetch(payloadBlobUrl, { cache: "no-store" }).then((response) => {
       if (!response.ok) throw new Error("Could not load app payload");
       if (!("DecompressionStream" in window)) throw new Error("This browser cannot decompress the simulator payload");
-      return response.text();
-    }).then(async (payload) => {
+      return response.json();
+    }).then(async (blob) => {
+      const payload = atob(blob.content.replace(/\s+/g, "")).replace(/\s+/g, "");
       const binary = atob(payload.replace(/\s+/g, ""));
       const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
       const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
